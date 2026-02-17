@@ -72,12 +72,6 @@
             border-color: var(--secondary);
         }
         
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
         .payment-methods {
             display: flex;
             flex-direction: column;
@@ -186,11 +180,16 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 20px;
+            transition: all 0.3s;
         }
         
-        .governorates {
-            max-height: 200px;
-            overflow-y: auto;
+        .submit-order:hover {
+            background: #e56712;
+            transform: translateY(-2px);
+        }
+        
+        .submit-order:active {
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -222,22 +221,22 @@
                     <h2 class="section-title">📋 معلومات التوصيل</h2>
                     
                     <div class="form-group">
-                        <label class="form-label">الاسم الكامل</label>
+                        <label class="form-label">الاسم الكامل *</label>
                         <input type="text" class="form-input" id="fullName" placeholder="أدخل اسمك الثلاثي">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">رقم الهاتف</label>
+                        <label class="form-label">رقم الهاتف *</label>
                         <input type="tel" class="form-input" id="phone" placeholder="07xx xxx xxxx">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">رقم هاتف احتياطي (اختياري)</label>
-                        <input type="tel" class="form-input" id="phone2" placeholder="07xx xxx xxxx">
+                        <label class="form-label">رقم هاتف احتياطي</label>
+                        <input type="tel" class="form-input" id="phone2" placeholder="07xx xxx xxxx (اختياري)">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">المحافظة</label>
+                        <label class="form-label">المحافظة *</label>
                         <select class="form-select" id="governorate" onchange="updateDeliveryCost()">
                             <option value="">اختر المحافظة</option>
                             <option value="بغداد">بغداد</option>
@@ -262,13 +261,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">العنوان بالتفصيل</label>
+                        <label class="form-label">العنوان بالتفصيل *</label>
                         <input type="text" class="form-input" id="address" placeholder="الحي، الشارع، رقم الدار">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">ملاحظات للمندوب (اختياري)</label>
-                        <input type="text" class="form-input" id="notes" placeholder="أوقات التوصيل المناسبة...">
+                        <label class="form-label">ملاحظات للمندوب</label>
+                        <input type="text" class="form-input" id="notes" placeholder="أوقات التوصيل المناسبة... (اختياري)">
                     </div>
                 </div>
 
@@ -332,15 +331,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script src="firebase-config.js"></script>
     <script>
+        // ===== المتغيرات العامة =====
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let deliveryCost = 0;
         let selectedPayment = 'cash';
 
+        // ===== عرض ملخص الطلب =====
         function displayOrderSummary() {
             const orderItems = document.getElementById('orderItems');
             const orderTotal = document.getElementById('orderTotal');
             
-            if (cart.length === 0) {
+            if (!cart || cart.length === 0) {
                 window.location.href = 'index.html';
                 return;
             }
@@ -360,13 +361,14 @@
 
             orderItems.innerHTML = itemsHTML;
             
-            let total = subtotal + deliveryCost;
+            let total = Math.round((subtotal + deliveryCost) / 1500);
             orderTotal.innerHTML = `
                 <span>الإجمالي</span>
-                <span>$${Math.round(total/1500)}</span>
+                <span>$${total}</span>
             `;
         }
 
+        // ===== تحديث تكلفة التوصيل =====
         function updateDeliveryCost() {
             const gov = document.getElementById('governorate').value;
             
@@ -381,6 +383,7 @@
             displayOrderSummary();
         }
 
+        // ===== اختيار طريقة الدفع =====
         function selectPayment(method) {
             selectedPayment = method;
             document.querySelectorAll('.payment-option').forEach(opt => {
@@ -389,67 +392,124 @@
             event.currentTarget.classList.add('selected');
         }
 
+        // ===== تأكيد الطلب =====
         async function submitOrder() {
-            const name = document.getElementById('fullName').value;
-            const phone = document.getElementById('phone').value;
+            console.log('✅ تم الضغط على تأكيد الطلب');
+            
+            // التحقق من الحقول المطلوبة
+            const name = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
             const governorate = document.getElementById('governorate').value;
-            const address = document.getElementById('address').value;
+            const address = document.getElementById('address').value.trim();
 
-            if (!name || !phone || !governorate || !address) {
-                alert('الرجاء ملء جميع الحقول المطلوبة');
+            if (!name) {
+                alert('❌ الرجاء إدخال الاسم الكامل');
+                return;
+            }
+            
+            if (!phone) {
+                alert('❌ الرجاء إدخال رقم الهاتف');
+                return;
+            }
+            
+            if (!governorate) {
+                alert('❌ الرجاء اختيار المحافظة');
+                return;
+            }
+            
+            if (!address) {
+                alert('❌ الرجاء إدخال العنوان');
                 return;
             }
 
+            // التحقق من وجود منتجات في السلة
+            if (!cart || cart.length === 0) {
+                alert('❌ سلة التسوق فارغة');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // إنشاء الطلب
             const order = {
                 id: Date.now(),
                 date: new Date().toLocaleString('ar-IQ'),
                 customer: {
-                    name,
-                    phone,
-                    phone2: document.getElementById('phone2').value,
-                    governorate,
-                    address,
-                    notes: document.getElementById('notes').value
+                    name: name,
+                    phone: phone,
+                    phone2: document.getElementById('phone2')?.value.trim() || '',
+                    governorate: governorate,
+                    address: address,
+                    notes: document.getElementById('notes')?.value.trim() || ''
                 },
                 items: cart.map(item => ({
                     name: item.name,
                     price: Math.round(item.price/1500),
                     id: item.id
                 })),
-                subtotal: Math.round(cart.reduce((sum, item) => sum + item.price, 0)/1500),
-                delivery: Math.round(deliveryCost/1500),
-                total: Math.round((cart.reduce((sum, item) => sum + item.price, 0) + deliveryCost)/1500),
+                subtotal: Math.round(cart.reduce((sum, item) => sum + item.price, 0) / 1500),
+                delivery: Math.round(deliveryCost / 1500),
+                total: Math.round((cart.reduce((sum, item) => sum + item.price, 0) + deliveryCost) / 1500),
                 payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
                 status: 'جديد',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                timestamp: new Date().toISOString()
             };
 
+            console.log('✅ تم إنشاء الطلب:', order);
+
             try {
-                // حفظ في Firebase
-                await db.collection('orders').add(order);
-                console.log('✅ تم حفظ الطلب في Firebase');
+                // حفظ الطلب
                 
-                // حفظ في localStorage احتياطي
+                // 1. حفظ في Firebase إذا كان متاح
+                if (typeof db !== 'undefined' && db) {
+                    try {
+                        await db.collection('orders').add(order);
+                        console.log('✅ تم حفظ الطلب في Firebase');
+                    } catch (fbError) {
+                        console.log('⚠️ Firebase غير متاح، استمرار مع localStorage');
+                    }
+                }
+                
+                // 2. حفظ في localStorage
                 let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
                 allOrders.push(order);
                 localStorage.setItem('orders', JSON.stringify(allOrders));
                 
+                // 3. تفريغ السلة
                 localStorage.removeItem('cart');
+                
+                // 4. التوجيه لصفحة الشكر
+                console.log('✅ جاري التوجيه لصفحة الشكر');
                 window.location.href = `thank-you.html?id=${order.id}`;
+                
             } catch (error) {
-                console.error('خطأ في حفظ الطلب:', error);
-                alert('حدث خطأ، الرجاء المحاولة مرة أخرى');
+                console.error('❌ خطأ في حفظ الطلب:', error);
+                
+                // في حالة الخطأ، نكمل على الأقل مع localStorage
+                try {
+                    let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                    allOrders.push(order);
+                    localStorage.setItem('orders', JSON.stringify(allOrders));
+                    localStorage.removeItem('cart');
+                    window.location.href = `thank-you.html?id=${order.id}`;
+                } catch (finalError) {
+                    alert('حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى');
+                }
             }
         }
 
-        displayOrderSummary();
-        updateCartCount();
-
+        // ===== تحديث عداد السلة =====
         function updateCartCount() {
             document.querySelectorAll('.cart-count').forEach(el => {
                 el.textContent = cart.length;
             });
         }
+
+        // ===== تشغيل عند تحميل الصفحة =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ صفحة الدفع جاهزة');
+            displayOrderSummary();
+            updateCartCount();
+        });
     </script>
 </body>
     </html>

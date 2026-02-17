@@ -429,11 +429,34 @@
         }
 
         displayOrders();
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
 <script src="firebase-config.js"></script>
+<script>
+    let orders = [];
+
+    // جلب الطلبات من Firebase
+    async function loadOrders() {
+        try {
+            const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
+            orders = [];
+            snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+            
+            if (orders.length === 0) {
+                // إذا مافي طلبات، نجيب من localStorage
+                orders = JSON.parse(localStorage.getItem('orders')) || [];
+            }
+            
+            displayOrders(orders);
+        } catch (error) {
+            console.error('خطأ في Firebase:', error);
+            orders = JSON.parse(localStorage.getItem('orders')) || [];
+            displayOrders(orders);
+        }
+    }
+
+    loadOrders();
+</script>
 </body>
     
 </html>

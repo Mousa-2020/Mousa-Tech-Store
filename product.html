@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل المنتج - Mousa Tech Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        /* أنماط إضافية للتقييمات */
+        .review-form {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .rating-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 1.8rem;
+            color: #cbd5e1;
+            cursor: pointer;
+        }
+        
+        .star-rating .star:hover,
+        .star-rating .star.active {
+            color: var(--rating);
+        }
+        
+        .review-textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .submit-review {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .review-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .reviewer-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .review-date {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        
+        .review-stars {
+            color: var(--rating);
+            margin-bottom: 10px;
+        }
+        
+        .review-comment {
+            line-height: 1.6;
+            color: var(--text);
+        }
+        
+        .review-verified {
+            display: inline-block;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            margin-right: 10px;
+        }
+        
+        /* منتجات مشابهة */
+        .similar-products {
+            margin-top: 40px;
+        }
+        
+        .similar-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html">
+                <img src="logo.png" alt="Mousa Tech Store" class="logo">
+            </a>
+            <div class="header-buttons">
+                <button class="icon-btn" onclick="window.location.href='cart.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </button>
+                <button class="icon-btn" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container product-page">
+        <div id="productDetails" class="product-details">
+            <!-- تظهر تفاصيل المنتج هنا -->
+        </div>
+
+        <!-- التبويبات -->
+        <div class="tabs">
+            <div class="tab-header">
+                <button class="tab-btn active" onclick="showTab('specs')">📋 المواصفات</button>
+                <button class="tab-btn" onclick="showTab('reviews')">⭐ التقييمات</button>
+                <button class="tab-btn" onclick="showTab('warranty')">🛡️ الضمان</button>
+            </div>
+            
+            <div class="tab-content active" id="specsTab">
+                <div id="productSpecs"></div>
+            </div>
+            
+            <div class="tab-content" id="reviewsTab">
+                <div class="review-form">
+                    <h3>📝 أضف تقييمك</h3>
+                    <div class="rating-input">
+                        <span>تقييمك:</span>
+                        <div class="star-rating" id="starRating">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                    </div>
+                    <textarea id="reviewText" class="review-textarea" placeholder="اكتب رأيك في المنتج..."></textarea>
+                    <button class="submit-review" onclick="submitReview()">إرسال التقييم</button>
+                </div>
+                
+                <div id="reviewsList">
+                    <!-- تظهر التقييمات هنا -->
+                </div>
+            </div>
+            
+            <div class="tab-content" id="warrantyTab">
+                <div style="padding: 20px; line-height: 1.8;">
+                    <h3>🛡️ سياسة الضمان</h3>
+                    <p>• ضمان سنة كاملة على جميع المنتجات</p>
+                    <p>• استبدال مجاني خلال 7 أيام لأي عيب مصنعي</p>
+                    <p>• فحص مجاني قبل الدفع</p>
+                    <p>• دعم فني مجاني لمدة سنة</p>
+                    <p>• الصيانة متوفرة في مركزنا

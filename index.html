@@ -25,36 +25,44 @@
         </div>
     </header>
 
-    <!-- شريط البحث -->
-    <div class="container">
+    <!-- شريط البحث الذكي -->
+    <div class="container search-container">
         <div class="search-box">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" placeholder="ابحث عن منتج..." class="search-input">
+            <input type="text" id="searchInput" placeholder="ابحث عن منتج..." class="search-input" autocomplete="off">
+            <div id="suggestions" class="suggestions-box"></div>
         </div>
     </div>
 
     <!-- تبويب الفئات -->
     <div class="container">
         <div class="categories">
-            <button class="category-btn active" onclick="filterProducts('all')">الكل</button>
-            <button class="category-btn" onclick="filterProducts('apple')">📱 أبل</button>
-            <button class="category-btn" onclick="filterProducts('samsung')">📱 سامسونج</button>
-            <button class="category-btn" onclick="filterProducts('gaming')">🎮 ألعاب</button>
-            <button class="category-btn" onclick="filterProducts('accessories')">🎧 إكسسوارات</button>
-            <button class="category-btn" onclick="filterProducts('health')">🏥 صحة</button>
-            <button class="category-btn" onclick="filterProducts('tech')">🚀 تقنيات</button>
+            <button class="category-btn active" onclick="filterProducts('all', this)">الكل</button>
+            <button class="category-btn" onclick="filterProducts('apple', this)">📱 أبل</button>
+            <button class="category-btn" onclick="filterProducts('samsung', this)">📱 سامسونج</button>
+            <button class="category-btn" onclick="filterProducts('gaming', this)">🎮 ألعاب</button>
+            <button class="category-btn" onclick="filterProducts('accessories', this)">🎧 إكسسوارات</button>
+            <button class="category-btn" onclick="filterProducts('health', this)">🏥 صحة</button>
+            <button class="category-btn" onclick="filterProducts('tech', this)">🚀 تقنيات</button>
         </div>
     </div>
 
-    <!-- قسم المنتجات -->
+    <!-- عروض اليوم -->
+    <div class="container">
+        <div class="offer-banner" id="offerBanner">
+            <!-- تظهر هنا عروض اليوم -->
+        </div>
+    </div>
+
+    <!-- قسم الأكثر تقييماً -->
     <section class="container">
-        <h2 class="section-title">🔥 الأكثر مبيعاً</h2>
-        <div class="products-grid" id="productsGrid"></div>
+        <h2 class="section-title">⭐ الأكثر تقييماً</h2>
+        <div class="products-grid" id="topRatedGrid"></div>
     </section>
 
-    <!-- قسم جديد المتجر -->
+    <!-- قسم أحدث المنتجات -->
     <section class="container">
-        <h2 class="section-title">✨ جديد المتجر</h2>
+        <h2 class="section-title">🆕 أحدث المنتجات</h2>
         <div class="products-grid" id="newProductsGrid"></div>
     </section>
 
@@ -67,74 +75,132 @@
     <script>
         // ===== المتغيرات العامة =====
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let currentFilter = 'all';
         let allProducts = [];
+        let currentFilter = 'all';
 
         // ===== تحميل المنتجات =====
         function loadProducts() {
-            // نحاول نجيب المنتجات من localStorage (اللي عدلتها من لوحة التحكم)
             const savedProducts = localStorage.getItem('products');
             
             if (savedProducts) {
-                // إذا في منتجات في localStorage، نستخدمها
                 allProducts = JSON.parse(savedProducts);
-                console.log('✅ تم تحميل المنتجات من لوحة التحكم:', allProducts.length);
+                console.log('✅ تم تحميل', allProducts.length, 'منتج من لوحة التحكم');
             } else {
-                // إذا ما في، نستخدم products.js كاحتياطي
                 allProducts = [];
                 for (const category in productsData) {
                     allProducts = allProducts.concat(productsData[category]);
                 }
-                console.log('✅ تم تحميل المنتجات من الملف الثابت');
+                console.log('✅ تم تحميل', allProducts.length, 'منتج من الملف الثابت');
             }
             
-            // عرض المنتجات
-            displayProducts();
+            // إضافة خاصية التقييمات إذا لم تكن موجودة
+            allProducts = allProducts.map(p => ({
+                ...p,
+                rating: p.rating || Math.floor(Math.random() * 5) + 1,
+                reviews: p.reviews || []
+            }));
+            
+            displayOffer();
+            displayTopRated();
+            displayNewProducts();
+            updateCartCount();
         }
 
-        // ===== عرض المنتجات =====
-        function displayProducts() {
-            const grid = document.getElementById('productsGrid');
+        // ===== عرض عروض اليوم =====
+        function displayOffer() {
+            if (allProducts.length === 0) return;
+            
+            // اختيار منتج عشوائي للعرض
+            const offerProduct = allProducts[Math.floor(Math.random() * allProducts.length)];
+            const offerPrice = offerProduct.price;
+            const originalPrice = Math.round(offerPrice * 1.2); // 20% زيادة للسعر الأصلي
+            
+            document.getElementById('offerBanner').innerHTML = `
+                <div class="offer-title">🔥 عرض اليوم</div>
+                <div class="offer-subtitle">${offerProduct.name}</div>
+                <div class="offer-price">$${offerPrice} <span class="offer-old-price">$${originalPrice}</span></div>
+                <div class="offer-stock">⚠️ فقط 5 قطع متبقية</div>
+            `;
+        }
+
+        // ===== عرض المنتجات في شبكة =====
+        function displayProducts(products, elementId) {
+            const grid = document.getElementById(elementId);
             if (!grid) return;
 
-            let productsToShow = [];
-            
-            if (currentFilter === 'all') {
-                productsToShow = allProducts;
-            } else {
-                productsToShow = allProducts.filter(p => p.category === currentFilter);
-            }
-            
-            if (productsToShow.length === 0) {
+            if (products.length === 0) {
                 grid.innerHTML = '<p style="text-align: center; padding: 40px;">لا توجد منتجات</p>';
                 return;
             }
 
-            grid.innerHTML = productsToShow.slice(0, 8).map(product => `
+            grid.innerHTML = products.map(product => {
+                const rating = product.rating || 5;
+                const stars = '★'.repeat(rating) + '☆'.repeat(5-rating);
+                
+                return `
                 <div class="product-card">
-                    <div class="product-image">
+                    ${product.stock && product.stock < 5 ? '<div class="product-badge">⚠️ مخزون محدود</div>' : ''}
+                    <div class="product-image" onclick="window.location.href='product.html?id=${product.id}'">
                         <img src="${product.image}" alt="${product.name}">
                     </div>
                     <div class="product-info">
-                        <div class="product-name">${product.name}</div>
+                        <div class="product-name" onclick="window.location.href='product.html?id=${product.id}'">${product.name}</div>
+                        <div class="product-rating">
+                            <span class="stars">${stars}</span>
+                            <span>(${product.reviews?.length || 0})</span>
+                        </div>
                         <div class="product-price">$${product.price}</div>
                         <button class="add-to-cart" onclick="addToCart(${product.id})">
                             <i class="fas fa-shopping-cart"></i> أضف للسلة
                         </button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
+        }
+
+        // ===== عرض الأكثر تقييماً =====
+        function displayTopRated() {
+            const topRated = [...allProducts]
+                .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+                .slice(0, 8);
+            displayProducts(topRated, 'topRatedGrid');
+        }
+
+        // ===== عرض أحدث المنتجات =====
+        function displayNewProducts() {
+            const newProducts = allProducts.slice(0, 8);
+            displayProducts(newProducts, 'newProductsGrid');
         }
 
         // ===== إضافة للسلة =====
         function addToCart(productId) {
             const product = allProducts.find(p => p.id === productId);
-            
             if (product) {
                 cart.push(product);
                 localStorage.setItem('cart', JSON.stringify(cart));
                 updateCartCount();
-                alert('✅ تمت الإضافة للسلة');
+                
+                // رسالة منبثقة
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: var(--success);
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 8px;
+                    z-index: 9999;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    animation: slideDown 0.3s;
+                `;
+                notification.textContent = '✅ تمت الإضافة للسلة';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
             }
         }
 
@@ -145,51 +211,67 @@
             });
         }
 
-        // ===== تصفية المنتجات =====
-        function filterProducts(category) {
+        // ===== تصفية حسب الفئة =====
+        function filterProducts(category, btn) {
             currentFilter = category;
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
+            
+            document.querySelectorAll('.category-btn').forEach(b => {
+                b.classList.remove('active');
             });
-            event.target.classList.add('active');
-            displayProducts();
+            btn.classList.add('active');
+            
+            if (category === 'all') {
+                displayNewProducts();
+                displayTopRated();
+            } else {
+                const filtered = allProducts.filter(p => p.category === category);
+                displayProducts(filtered, 'topRatedGrid');
+                document.getElementById('newProductsGrid').innerHTML = '';
+            }
         }
 
-        // ===== البحث =====
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProducts();
-            updateCartCount();
+        // ===== البحث الذكي =====
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
 
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.addEventListener('input', function(e) {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const filtered = allProducts.filter(p => 
-                        p.name.toLowerCase().includes(searchTerm)
-                    );
-                    
-                    const grid = document.getElementById('productsGrid');
-                    if (filtered.length === 0) {
-                        grid.innerHTML = '<p style="text-align: center; padding: 40px;">لا توجد نتائج</p>';
-                    } else {
-                        grid.innerHTML = filtered.map(product => `
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="${product.image}" alt="${product.name}">
-                                </div>
-                                <div class="product-info">
-                                    <div class="product-name">${product.name}</div>
-                                    <div class="product-price">$${product.price}</div>
-                                    <button class="add-to-cart" onclick="addToCart(${product.id})">
-                                        <i class="fas fa-shopping-cart"></i> أضف للسلة
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
-                });
+        searchInput.addEventListener('input', function() {
+            const term = this.value.toLowerCase().trim();
+            
+            if (term.length < 2) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            const matches = allProducts.filter(p => 
+                p.name.toLowerCase().includes(term) ||
+                (p.altNames && p.altNames.some(n => n.toLowerCase().includes(term)))
+            ).slice(0, 5);
+
+            if (matches.length > 0) {
+                suggestionsBox.innerHTML = matches.map(p => `
+                    <div class="suggestion-item" onclick="window.location.href='product.html?id=${p.id}'">
+                        <img src="${p.image}" alt="${p.name}">
+                        <div class="suggestion-info">
+                            <div class="suggestion-name">${p.name}</div>
+                            <div class="suggestion-price">$${p.price}</div>
+                        </div>
+                    </div>
+                `).join('');
+                suggestionsBox.style.display = 'block';
+            } else {
+                suggestionsBox.style.display = 'none';
             }
         });
+
+        // إخفاء الاقتراحات عند النقر خارجها
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target)) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+
+        // ===== التحميل الأولي =====
+        loadProducts();
     </script>
 </body>
 </html>

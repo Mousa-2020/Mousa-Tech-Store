@@ -328,6 +328,9 @@
     </a>
 
     <script src="products.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let deliveryCost = 0;
@@ -386,7 +389,7 @@
             event.currentTarget.classList.add('selected');
         }
 
-        function submitOrder() {
+        async function submitOrder() {
             const name = document.getElementById('fullName').value;
             const phone = document.getElementById('phone').value;
             const governorate = document.getElementById('governorate').value;
@@ -399,7 +402,7 @@
 
             const order = {
                 id: Date.now(),
-                date: new Date().toISOString(),
+                date: new Date().toLocaleString('ar-IQ'),
                 customer: {
                     name,
                     phone,
@@ -408,18 +411,35 @@
                     address,
                     notes: document.getElementById('notes').value
                 },
-                items: cart,
+                items: cart.map(item => ({
+                    name: item.name,
+                    price: Math.round(item.price/1500),
+                    id: item.id
+                })),
                 subtotal: Math.round(cart.reduce((sum, item) => sum + item.price, 0)/1500),
                 delivery: Math.round(deliveryCost/1500),
                 total: Math.round((cart.reduce((sum, item) => sum + item.price, 0) + deliveryCost)/1500),
                 payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
-                status: 'جديد'
+                status: 'جديد',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            console.log('طلب جديد:', order);
-            
-            localStorage.removeItem('cart');
-            window.location.href = `thank-you.html?id=${order.id}`;
+            try {
+                // حفظ في Firebase
+                await db.collection('orders').add(order);
+                console.log('✅ تم حفظ الطلب في Firebase');
+                
+                // حفظ في localStorage احتياطي
+                let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                allOrders.push(order);
+                localStorage.setItem('orders', JSON.stringify(allOrders));
+                
+                localStorage.removeItem('cart');
+                window.location.href = `thank-you.html?id=${order.id}`;
+            } catch (error) {
+                console.error('خطأ في حفظ الطلب:', error);
+                alert('حدث خطأ، الرجاء المحاولة مرة أخرى');
+            }
         }
 
         displayOrderSummary();
@@ -432,4 +452,4 @@
         }
     </script>
 </body>
-</html>
+    </html>

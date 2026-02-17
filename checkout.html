@@ -6,34 +6,6 @@
     <title>إتمام الطلب - Mousa Tech Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        .checkout-page { padding: 20px 0 80px; }
-        .checkout-title { font-size: 1.8rem; color: #0A0F1F; margin-bottom: 25px; }
-        .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .section-card { background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
-        .section-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: #0A0F1F; }
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-input, .form-select { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; }
-        .payment-option { display: flex; align-items: center; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
-        .payment-option.selected { border-color: #F97316; background: rgba(249,115,22,0.05); }
-        .payment-option input { display: none; }
-        .payment-icon { width: 40px; height: 40px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-left: 15px; }
-        .order-summary { background: white; border-radius: 15px; padding: 25px; position: sticky; top: 100px; }
-        .order-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
-        .order-total { display: flex; justify-content: space-between; padding: 20px 0; border-top: 2px solid #e2e8f0; font-size: 1.3rem; font-weight: 700; }
-        .submit-order { width: 100%; background: #F97316; color: white; border: none; padding: 18px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; margin-top: 20px; }
-        .invoice-preview { margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 12px; border: 2px dashed #F97316; display: none; }
-        .invoice-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        .invoice-table th { background: #0A0F1F; color: white; padding: 10px; }
-        .invoice-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
-        .invoice-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .invoice-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; }
-        .invoice-btn.pdf { background: #EF4444; color: white; }
-        .invoice-btn.whatsapp { background: #25D366; color: white; }
-        @media (max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } }
-    </style>
 </head>
 <body>
     <header class="header">
@@ -55,18 +27,26 @@
             <div>
                 <div class="section-card">
                     <h2 class="section-title">📋 معلومات التوصيل</h2>
-                    <div class="form-group"><input type="text" class="form-input" id="fullName" placeholder="الاسم الكامل"></div>
-                    <div class="form-group"><input type="tel" class="form-input" id="phone" placeholder="رقم الهاتف"></div>
                     <div class="form-group">
-                        <select class="form-select" id="governorate" onchange="updateDelivery()">
+                        <input type="text" class="form-input" id="fullName" placeholder="الاسم الكامل">
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" class="form-input" id="phone" placeholder="رقم الهاتف">
+                    </div>
+                    <div class="form-group">
+                        <select class="form-select" id="governorate">
                             <option value="">اختر المحافظة</option>
                             <option value="بغداد">بغداد</option>
                             <option value="البصرة">البصرة</option>
                             <option value="أربيل">أربيل</option>
                             <option value="الموصل">الموصل</option>
+                            <option value="النجف">النجف</option>
+                            <option value="كركوك">كركوك</option>
                         </select>
                     </div>
-                    <div class="form-group"><input type="text" class="form-input" id="address" placeholder="العنوان بالتفصيل"></div>
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="address" placeholder="العنوان بالتفصيل">
+                    </div>
                 </div>
 
                 <div class="section-card">
@@ -87,11 +67,8 @@
             <div>
                 <div class="order-summary">
                     <h2 class="section-title">🛍️ ملخص الطلب</h2>
-                    <div id="orderItems"></div>
+                    <div id="orderItems" class="order-items"></div>
                     <div class="order-total" id="orderTotal"></div>
-                    
-                    <div class="invoice-preview" id="invoicePreview"></div>
-                    
                     <button class="submit-order" onclick="submitOrder()">
                         <i class="fas fa-check-circle"></i> تأكيد الطلب
                     </button>
@@ -100,36 +77,21 @@
         </div>
     </div>
 
+    <a href="https://wa.me/9647717538315" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
-    
+    <script src="firebase-config.js"></script>
+
     <script>
-        // ===== Firebase Config =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyBEk2TemPijtg6dHCd0dFLOzciXUIZCOHA",
-            authDomain: "mousa-tech-store.firebaseapp.com",
-            projectId: "mousa-tech-store",
-            storageBucket: "mousa-tech-store.firebasestorage.app",
-            messagingSenderId: "395430710427",
-            appId: "1:395430710427:web:c914a92653225535010a3e",
-            measurementId: "G-GX1XFLE3FP"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const analytics = firebase.analytics();
-
-        console.log('✅ Firebase initialized');
-
-        // ===== المتغيرات =====
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let deliveryCost = 0;
         let selectedPayment = 'cash';
 
-        // عرض الملخص
         function displayOrderSummary() {
             const itemsDiv = document.getElementById('orderItems');
             const totalDiv = document.getElementById('orderTotal');
@@ -142,17 +104,15 @@
             let subtotal = 0;
             itemsDiv.innerHTML = cart.map(item => {
                 subtotal += Number(item.price) || 0;
-                return `<div class="order-item"><span>${item.name}</span><span>$${Number(item.price).toLocaleString()}</span></div>`;
+                return `<div class="order-item">
+                    <span class="order-item-name">${item.name}</span>
+                    <span class="order-item-price">$${Number(item.price).toLocaleString()}</span>
+                </div>`;
             }).join('');
 
             const total = subtotal + deliveryCost;
             totalDiv.innerHTML = `<span>الإجمالي</span><span>$${total.toLocaleString()}</span>`;
             updateCartCount();
-        }
-
-        function updateDelivery() {
-            deliveryCost = document.getElementById('governorate').value === 'بغداد' ? 5 : 10;
-            displayOrderSummary();
         }
 
         function selectPayment(method) {
@@ -161,27 +121,24 @@
             event.currentTarget.classList.add('selected');
         }
 
-        // تأكيد الطلب
         async function submitOrder() {
-            console.log('✅ زر التأكيد تم الضغط');
-            
             const name = document.getElementById('fullName').value;
             const phone = document.getElementById('phone').value;
             const gov = document.getElementById('governorate').value;
             const address = document.getElementById('address').value;
 
             if (!name || !phone || !gov || !address) {
-                alert('الرجاء ملء جميع الحقول');
+                alert('❌ الرجاء ملء جميع الحقول المطلوبة');
                 return;
             }
 
-            const subtotal = cart.reduce((s, i) => s + (Number(i.price) || 0), 0);
+            const subtotal = cart.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
             
             const order = {
                 id: Date.now(),
                 date: new Date().toLocaleString('ar-IQ'),
                 customer: { name, phone, gov, address },
-                items: cart.map(i => ({ name: i.name, price: Number(i.price) || 0 })),
+                items: cart.map(item => ({ name: item.name, price: Number(item.price) || 0 })),
                 subtotal: subtotal,
                 delivery: deliveryCost,
                 total: subtotal + deliveryCost,
@@ -192,10 +149,10 @@
 
             try {
                 // حفظ في Firebase
-                const docRef = await db.collection('orders').add(order);
-                console.log('✅ تم حفظ الطلب في Firebase:', docRef.id);
+                await db.collection('orders').add(order);
+                console.log('✅ تم حفظ الطلب في Firebase');
                 
-                // حفظ في localStorage
+                // حفظ في localStorage احتياطي
                 let orders = JSON.parse(localStorage.getItem('orders')) || [];
                 orders.push(order);
                 localStorage.setItem('orders', JSON.stringify(orders));
@@ -208,7 +165,7 @@
                 
             } catch (error) {
                 console.error('❌ خطأ في Firebase:', error);
-                alert('تم حفظ الطلب محلياً');
+                alert('⚠️ تم حفظ الطلب محلياً');
                 localStorage.removeItem('cart');
                 window.location.href = `thank-you.html?id=${order.id}`;
             }

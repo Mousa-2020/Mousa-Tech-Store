@@ -1,13 +1,21 @@
 // ===== إعدادات Firebase =====
 const firebaseConfig = {
-    apiKey: "AIzaSyB7kM3XqZ1pQ2rS4tU5vW6xY7zA8bC9dE0fG",
+    apiKey: "AIzaSyBEk2TemPijtg6dHCd0dFLOzciXUIZCOHA",
     authDomain: "mousa-tech-store.firebaseapp.com",
     projectId: "mousa-tech-store",
-    storageBucket: "mousa-tech-store.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abc123def456ghi789jkl"
+    storageBucket: "mousa-tech-store.firebasestorage.app",
+    messagingSenderId: "395430710427",
+    appId: "1:395430710427:web:c914a92653225535010a3e",
+    measurementId: "G-GX1XFLE3FP"
 };
 
 // تهيئة Firebase
 firebase.initializeApp(firebaseConfig);
+
+// تهيئة Firestore
 const db = firebase.firestore();
+
+// تهيئة Analytics
+const analytics = firebase.analytics();
+
+console.log('✅ Firebase connected successfully');

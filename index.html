@@ -64,6 +64,132 @@
     </a>
 
     <script src="products.js"></script>
-    <script src="script.js"></script>
+    <script>
+        // ===== المتغيرات العامة =====
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentFilter = 'all';
+        let allProducts = [];
+
+        // ===== تحميل المنتجات =====
+        function loadProducts() {
+            // نحاول نجيب المنتجات من localStorage (اللي عدلتها من لوحة التحكم)
+            const savedProducts = localStorage.getItem('products');
+            
+            if (savedProducts) {
+                // إذا في منتجات في localStorage، نستخدمها
+                allProducts = JSON.parse(savedProducts);
+                console.log('✅ تم تحميل المنتجات من لوحة التحكم:', allProducts.length);
+            } else {
+                // إذا ما في، نستخدم products.js كاحتياطي
+                allProducts = [];
+                for (const category in productsData) {
+                    allProducts = allProducts.concat(productsData[category]);
+                }
+                console.log('✅ تم تحميل المنتجات من الملف الثابت');
+            }
+            
+            // عرض المنتجات
+            displayProducts();
+        }
+
+        // ===== عرض المنتجات =====
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            if (!grid) return;
+
+            let productsToShow = [];
+            
+            if (currentFilter === 'all') {
+                productsToShow = allProducts;
+            } else {
+                productsToShow = allProducts.filter(p => p.category === currentFilter);
+            }
+            
+            if (productsToShow.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; padding: 40px;">لا توجد منتجات</p>';
+                return;
+            }
+
+            grid.innerHTML = productsToShow.slice(0, 8).map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">$${product.price}</div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">
+                            <i class="fas fa-shopping-cart"></i> أضف للسلة
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== إضافة للسلة =====
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            
+            if (product) {
+                cart.push(product);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                alert('✅ تمت الإضافة للسلة');
+            }
+        }
+
+        // ===== تحديث عداد السلة =====
+        function updateCartCount() {
+            document.querySelectorAll('.cart-count').forEach(el => {
+                el.textContent = cart.length;
+            });
+        }
+
+        // ===== تصفية المنتجات =====
+        function filterProducts(category) {
+            currentFilter = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            displayProducts();
+        }
+
+        // ===== البحث =====
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            updateCartCount();
+
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const filtered = allProducts.filter(p => 
+                        p.name.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    const grid = document.getElementById('productsGrid');
+                    if (filtered.length === 0) {
+                        grid.innerHTML = '<p style="text-align: center; padding: 40px;">لا توجد نتائج</p>';
+                    } else {
+                        grid.innerHTML = filtered.map(product => `
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="${product.image}" alt="${product.name}">
+                                </div>
+                                <div class="product-info">
+                                    <div class="product-name">${product.name}</div>
+                                    <div class="product-price">$${product.price}</div>
+                                    <button class="add-to-cart" onclick="addToCart(${product.id})">
+                                        <i class="fas fa-shopping-cart"></i> أضف للسلة
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -59,7 +59,7 @@
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -74,57 +74,97 @@
             font-weight: 700;
             color: #F97316;
         }
-        .customers-table {
+        .customers-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .customer-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
+            border: 1px solid #e2e8f0;
         }
-        .table-header {
-            display: grid;
-            grid-template-columns: 2fr 1.5fr 2fr 1fr 1fr;
+        .customer-header {
             background: #f8fafc;
-            padding: 15px;
-            font-weight: 600;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        .customer-row {
-            display: grid;
-            grid-template-columns: 2fr 1.5fr 2fr 1fr 1fr;
-            padding: 15px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 2px solid #F97316;
+            cursor: pointer;
         }
-        .customer-row:hover {
-            background: #f8fafc;
+        .customer-header:hover {
+            background: #f1f5f9;
+        }
+        .customer-main-info {
+            display: flex;
+            gap: 30px;
+            align-items: center;
         }
         .customer-name {
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0A0F1F;
         }
         .customer-phone {
             color: #F97316;
+            font-weight: 600;
         }
-        .customer-address {
+        .customer-stats {
+            display: flex;
+            gap: 20px;
             color: #64748b;
-            font-size: 0.9rem;
         }
-        .order-count {
-            background: #f1f5f9;
+        .customer-orders-list {
+            padding: 20px;
+            display: none;
+        }
+        .customer-orders-list.expanded {
+            display: block;
+        }
+        .order-item {
+            display: grid;
+            grid-template-columns: 100px 1fr 150px 100px;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            align-items: center;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-id {
+            font-weight: 600;
+            color: #0A0F1F;
+        }
+        .order-products {
+            color: #64748b;
+        }
+        .order-total {
+            font-weight: 700;
+            color: #F97316;
+        }
+        .order-status {
+            background: #F97316;
+            color: white;
             padding: 5px 10px;
             border-radius: 20px;
             text-align: center;
+            font-size: 0.85rem;
         }
-        .total-spent {
-            font-weight: 700;
-            color: #F97316;
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+        .expand-icon.rotated {
+            transform: rotate(180deg);
         }
         @media (max-width: 768px) {
             .sidebar { display: none; }
             .main-content { margin-right: 0; width: 100%; padding: 10px; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .table-header, .customer-row {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .customer-main-info { flex-direction: column; gap: 5px; align-items: start; }
+            .order-item { grid-template-columns: 1fr; gap: 5px; }
         }
     </style>
 </head>
@@ -151,42 +191,29 @@
     <div class="main-content">
         <div class="header-card">
             <h1>👥 إدارة العملاء</h1>
-            <p>جميع العملاء المسجلين وطلباتهم</p>
+            <p>عرض جميع العملاء مع تفاصيل طلباتهم</p>
         </div>
 
-        <div class="stats-grid" id="statsContainer">
-            <!-- تظهر الإحصائيات هنا -->
-        </div>
+        <div class="stats-grid" id="statsContainer"></div>
 
-        <div class="customers-table">
-            <div class="table-header">
-                <div>العميل</div>
-                <div>رقم الهاتف</div>
-                <div>العنوان</div>
-                <div>عدد الطلبات</div>
-                <div>إجمالي المشتريات</div>
-            </div>
-            <div id="customersList">
-                <!-- العملاء يظهرون هنا -->
-            </div>
-        </div>
+        <div class="customers-container" id="customersContainer"></div>
     </div>
 
     <script>
         // جلب الطلبات
         const orders = JSON.parse(localStorage.getItem('orders')) || [];
         
-        // تجميع العملاء
+        // تجميع العملاء (باستخدام اسم + هاتف كمفتاح)
         const customersMap = new Map();
         
         orders.forEach(order => {
             const customer = order.customer;
-            const phone = customer.phone;
-            
-            if (!customersMap.has(phone)) {
-                customersMap.set(phone, {
+            const key = `${customer.name}-${customer.phone}`; // مفتاح فريد
+        
+            if (!customersMap.has(key)) {
+                customersMap.set(key, {
                     name: customer.name,
-                    phone: phone,
+                    phone: customer.phone,
                     address: customer.address,
                     governorate: customer.governorate,
                     orders: [],
@@ -194,7 +221,7 @@
                 });
             }
             
-            const customerData = customersMap.get(phone);
+            const customerData = customersMap.get(key);
             customerData.orders.push(order);
             customerData.total += order.total || 0;
         });
@@ -202,32 +229,65 @@
         const customers = Array.from(customersMap.values());
 
         // إحصائيات
+        const totalCustomers = customers.length;
+        const totalOrders = orders.length;
+        const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+
         document.getElementById('statsContainer').innerHTML = `
             <div class="stat-card">
-                <div class="stat-number">${customers.length}</div>
+                <div class="stat-number">${totalCustomers}</div>
                 <div>إجمالي العملاء</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${orders.length}</div>
+                <div class="stat-number">${totalOrders}</div>
                 <div>إجمالي الطلبات</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">$${orders.reduce((s,o)=>s + (o.total||0),0)}</div>
+                <div class="stat-number">$${totalRevenue}</div>
                 <div>إجمالي المبيعات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${productsData ? Object.values(productsData).flat().length : 30}</div>
+                <div>إجمالي المنتجات</div>
             </div>
         `;
 
-        // عرض العملاء
-        document.getElementById('customersList').innerHTML = customers.map(c => `
-            <div class="customer-row">
-                <div>
-                    <div class="customer-name">${c.name}</div>
-                    <div style="font-size:0.8rem; color:#64748b;">${c.governorate}</div>
+        // عرض العملاء مع طلباتهم
+        function toggleOrders(index) {
+            const ordersDiv = document.getElementById(`orders-${index}`);
+            const icon = document.getElementById(`icon-${index}`);
+            ordersDiv.classList.toggle('expanded');
+            icon.classList.toggle('rotated');
+        }
+
+        document.getElementById('customersContainer').innerHTML = customers.map((customer, index) => `
+            <div class="customer-card">
+                <div class="customer-header" onclick="toggleOrders(${index})">
+                    <div class="customer-main-info">
+                        <span class="customer-name">${customer.name}</span>
+                        <span class="customer-phone">${customer.phone}</span>
+                        <span class="customer-stats">
+                            <span>📦 ${customer.orders.length} طلب</span>
+                            <span>💰 $${customer.total}</span>
+                        </span>
+                    </div>
+                    <div>
+                        <span>📍 ${customer.governorate}</span>
+                        <i class="fas fa-chevron-down expand-icon" id="icon-${index}"></i>
+                    </div>
                 </div>
-                <div class="customer-phone">${c.phone}</div>
-                <div class="customer-address">${c.address}</div>
-                <div class="order-count">${c.orders.length}</div>
-                <div class="total-spent">$${c.total}</div>
+                <div class="customer-orders-list" id="orders-${index}">
+                    ${customer.orders.map(order => `
+                        <div class="order-item">
+                            <div class="order-id">#${order.id}</div>
+                            <div class="order-products">
+                                ${order.items ? order.items.map(item => `• ${item.name}`).join('<br>') : 'منتج واحد'}
+                            </div>
+                            <div class="order-total">$${order.total}</div>
+                            <div class="order-status">${order.status || 'جديد'}</div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         `).join('');
     </script>

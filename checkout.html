@@ -6,43 +6,39 @@
     <title>إتمام الطلب - Mousa Tech Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico">
     <style>
         .checkout-page {
             padding: 20px 0 80px;
         }
         
         .checkout-title {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: var(--primary);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .checkout-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        
-        @media (min-width: 768px) {
-            .checkout-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
         }
         
         .section-card {
             background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 20px;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             margin-bottom: 20px;
         }
         
         .section-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .form-group {
@@ -52,12 +48,11 @@
         .form-label {
             display: block;
             margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: var(--gray);
+            font-weight: 600;
+            color: var(--text);
         }
         
-        .form-input,
-        .form-select {
+        .form-input, .form-select {
             width: 100%;
             padding: 12px;
             border: 2px solid var(--border);
@@ -67,15 +62,14 @@
             transition: all 0.3s;
         }
         
-        .form-input:focus,
-        .form-select:focus {
+        .form-input:focus, .form-select:focus {
             border-color: var(--secondary);
         }
         
         .payment-methods {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
         
         .payment-option {
@@ -106,27 +100,13 @@
             align-items: center;
             justify-content: center;
             margin-left: 15px;
-            font-size: 1.5rem;
-        }
-        
-        .payment-details {
-            flex: 1;
-        }
-        
-        .payment-name {
-            font-weight: 600;
-        }
-        
-        .payment-desc {
-            font-size: 0.85rem;
-            color: var(--gray);
+            font-size: 1.3rem;
         }
         
         .order-summary {
             background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 20px;
+            border-radius: 15px;
+            padding: 25px;
             position: sticky;
             top: 100px;
         }
@@ -134,7 +114,7 @@
         .order-items {
             max-height: 300px;
             overflow-y: auto;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .order-item {
@@ -145,12 +125,8 @@
             border-bottom: 1px solid var(--border);
         }
         
-        .order-item:last-child {
-            border-bottom: none;
-        }
-        
         .order-item-name {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
         .order-item-price {
@@ -162,10 +138,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 15px;
-            margin-top: 15px;
+            padding: 20px 0;
             border-top: 2px solid var(--border);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
         }
         
@@ -174,38 +149,120 @@
             background: var(--secondary);
             color: white;
             border: none;
-            padding: 15px;
+            padding: 18px;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
             transition: all 0.3s;
+            margin-top: 20px;
         }
         
         .submit-order:hover {
-            background: #e56712;
+            background: #EA580C;
             transform: translateY(-2px);
         }
         
-        .submit-order:active {
-            transform: translateY(0);
+        /* الفاتورة */
+        .invoice-preview {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 12px;
+            border: 2px dashed var(--secondary);
+        }
+        
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-header h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-table th,
+        .invoice-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .invoice-table th {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .invoice-total {
+            text-align: left;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .invoice-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .invoice-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .invoice-btn.pdf {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .invoice-btn.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .invoice-details {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <a href="index.html">
-                <img src="logo.png" alt="Mousa Tech Store" class="logo">
-            </a>
+            <a href="index.html"><img src="logo.png" alt="Mousa Tech Store" class="logo"></a>
             <div class="header-buttons">
                 <button class="icon-btn" onclick="window.location.href='cart.html'">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count">0</span>
-                </button>
-                <button class="icon-btn" onclick="window.location.href='profile.html'">
-                    <i class="fas fa-user"></i>
                 </button>
             </div>
         </div>
@@ -215,103 +272,89 @@
         <h1 class="checkout-title">✅ إتمام الطلب</h1>
 
         <div class="checkout-grid">
-            <!-- الجانب الأيمن - معلومات العميل -->
+            <!-- معلومات العميل -->
             <div>
                 <div class="section-card">
-                    <h2 class="section-title">📋 معلومات التوصيل</h2>
+                    <h2 class="section-title"><i class="fas fa-user"></i> معلومات التوصيل</h2>
                     
                     <div class="form-group">
-                        <label class="form-label">الاسم الكامل *</label>
+                        <label class="form-label">الاسم الكامل</label>
                         <input type="text" class="form-input" id="fullName" placeholder="أدخل اسمك الثلاثي">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">رقم الهاتف *</label>
+                        <label class="form-label">رقم الهاتف</label>
                         <input type="tel" class="form-input" id="phone" placeholder="07xx xxx xxxx">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">رقم هاتف احتياطي</label>
-                        <input type="tel" class="form-input" id="phone2" placeholder="07xx xxx xxxx (اختياري)">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">المحافظة *</label>
-                        <select class="form-select" id="governorate" onchange="updateDeliveryCost()">
+                        <label class="form-label">المحافظة</label>
+                        <select class="form-select" id="governorate" onchange="updateDelivery()">
                             <option value="">اختر المحافظة</option>
                             <option value="بغداد">بغداد</option>
-                            <option value="أربيل">أربيل</option>
                             <option value="البصرة">البصرة</option>
+                            <option value="أربيل">أربيل</option>
                             <option value="الموصل">الموصل</option>
                             <option value="النجف">النجف</option>
-                            <option value="كربلاء">كربلاء</option>
                             <option value="كركوك">كركوك</option>
-                            <option value="ديالى">ديالى</option>
-                            <option value="ذي قار">ذي قار</option>
-                            <option value="صلاح الدين">صلاح الدين</option>
-                            <option value="بابل">بابل</option>
-                            <option value="واسط">واسط</option>
-                            <option value="ميسان">ميسان</option>
-                            <option value="المثنى">المثنى</option>
-                            <option value="القادسية">القادسية</option>
-                            <option value="الأنبار">الأنبار</option>
-                            <option value="دهوك">دهوك</option>
-                            <option value="السليمانية">السليمانية</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">العنوان بالتفصيل *</label>
+                        <label class="form-label">العنوان بالتفصيل</label>
                         <input type="text" class="form-input" id="address" placeholder="الحي، الشارع، رقم الدار">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">ملاحظات للمندوب</label>
-                        <input type="text" class="form-input" id="notes" placeholder="أوقات التوصيل المناسبة... (اختياري)">
                     </div>
                 </div>
 
                 <div class="section-card">
-                    <h2 class="section-title">💳 طريقة الدفع</h2>
+                    <h2 class="section-title"><i class="fas fa-credit-card"></i> طريقة الدفع</h2>
                     
                     <div class="payment-methods">
                         <label class="payment-option selected" onclick="selectPayment('cash')">
                             <input type="radio" name="payment" value="cash" checked hidden>
-                            <div class="payment-icon">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </div>
-                            <div class="payment-details">
-                                <div class="payment-name">الدفع عند الاستلام</div>
-                                <div class="payment-desc">تدفع للمندوب عند استلام الطلب</div>
-                            </div>
+                            <div class="payment-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            <div>الدفع عند الاستلام</div>
                         </label>
                         
                         <label class="payment-option" onclick="selectPayment('card')">
                             <input type="radio" name="payment" value="card" hidden>
-                            <div class="payment-icon">
-                                <i class="fas fa-credit-card"></i>
-                            </div>
-                            <div class="payment-details">
-                                <div class="payment-name">بطاقة ائتمان</div>
-                                <div class="payment-desc">ماستركارد - فيزا - كي كارد</div>
-                            </div>
+                            <div class="payment-icon"><i class="fas fa-credit-card"></i></div>
+                            <div>بطاقة ائتمان</div>
                         </label>
                     </div>
                 </div>
             </div>
 
-            <!-- الجانب الأيسر - ملخص الطلب -->
+            <!-- ملخص الطلب والفاتورة -->
             <div>
                 <div class="order-summary">
-                    <h2 class="section-title">🛍️ ملخص الطلب</h2>
+                    <h2 class="section-title"><i class="fas fa-shopping-bag"></i> ملخص الطلب</h2>
                     
-                    <div class="order-items" id="orderItems">
-                        <!-- المنتجات تظهر هنا -->
-                    </div>
+                    <div class="order-items" id="orderItems"></div>
                     
-                    <div class="order-total" id="orderTotal">
-                        <span>الإجمالي</span>
-                        <span>$0</span>
+                    <div class="order-total" id="orderTotal"></div>
+
+                    <!-- معاينة الفاتورة -->
+                    <div class="invoice-preview" id="invoicePreview" style="display: none;">
+                        <div class="invoice-header">
+                            <h3>Mousa Tech Store</h3>
+                            <p>فاتورة ضريبية</p>
+                        </div>
+                        
+                        <div class="invoice-details" id="invoiceDetails"></div>
+                        
+                        <table class="invoice-table" id="invoiceTable"></table>
+                        
+                        <div class="invoice-total" id="invoiceTotal"></div>
+                        
+                        <div class="invoice-actions">
+                            <button class="invoice-btn pdf" onclick="downloadPDF()">
+                                <i class="fas fa-file-pdf"></i> تحميل PDF
+                            </button>
+                            <button class="invoice-btn whatsapp" onclick="sendWhatsApp()">
+                                <i class="fab fa-whatsapp"></i> واتساب
+                            </button>
+                        </div>
                     </div>
                     
                     <button class="submit-order" onclick="submitOrder()">
@@ -326,190 +369,188 @@
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <script src="products.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script src="firebase-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
-        // ===== المتغيرات العامة =====
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let deliveryCost = 0;
         let selectedPayment = 'cash';
 
-        // ===== عرض ملخص الطلب ===
+        // عرض ملخص الطلب
         function displayOrderSummary() {
-            const orderItems = document.getElementById('orderItems');
-            const orderTotal = document.getElementById('orderTotal');
+            const itemsContainer = document.getElementById('orderItems');
+            const totalContainer = document.getElementById('orderTotal');
             
-            if (!cart || cart.length === 0) {
+            if (cart.length === 0) {
                 window.location.href = 'index.html';
                 return;
             }
 
-            let itemsHTML = '';
             let subtotal = 0;
-
-            cart.forEach(item => {
+            itemsContainer.innerHTML = cart.map(item => {
                 subtotal += item.price;
-                itemsHTML += `
+                return `
                     <div class="order-item">
                         <span class="order-item-name">${item.name}</span>
-                        <span class="order-item-price">$${Math.round(item.price/1500)}</span>
+                        <span class="order-item-price">$${item.price}</span>
                     </div>
                 `;
-            });
+            }).join('');
 
-            orderItems.innerHTML = itemsHTML;
-            
-            let total = Math.round((subtotal + deliveryCost) / 1500);
-            orderTotal.innerHTML = `
+            const total = subtotal + deliveryCost;
+            totalContainer.innerHTML = `
                 <span>الإجمالي</span>
                 <span>$${total}</span>
             `;
+            
+            // عرض معاينة الفاتورة
+            if (cart.length > 0) {
+                showInvoicePreview();
+            }
         }
 
-        // ===== تحديث تكلفة التوصيل =====
-        function updateDeliveryCost() {
+        // تحديث تكلفة التوصيل
+        function updateDelivery() {
             const gov = document.getElementById('governorate').value;
-            
-            if (gov === 'بغداد') {
-                deliveryCost = 5000;
-            } else if (gov) {
-                deliveryCost = 15000;
-            } else {
-                deliveryCost = 0;
-            }
-            
+            deliveryCost = gov === 'بغداد' ? 5 : 10;
             displayOrderSummary();
         }
 
-        // ===== اختيار طريقة الدفع =====
+        // اختيار طريقة الدفع
         function selectPayment(method) {
             selectedPayment = method;
-            document.querySelectorAll('.payment-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
         }
 
-        // ===== تأكيد الطلب =====
-        async function submitOrder() {
-            console.log('✅ تم الضغط على تأكيد الطلب');
+        // عرض معاينة الفاتورة
+        function showInvoicePreview() {
+            const preview = document.getElementById('invoicePreview');
+            const details = document.getElementById('invoiceDetails');
+            const table = document.getElementById('invoiceTable');
+            const totalEl = document.getElementById('invoiceTotal');
             
-            // التحقق من الحقول المطلوبة
-            const name = document.getElementById('fullName').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const governorate = document.getElementById('governorate').value;
-            const address = document.getElementById('address').value.trim();
+            const name = document.getElementById('fullName').value || '__________';
+            const phone = document.getElementById('phone').value || '__________';
+            const gov = document.getElementById('governorate').value || '__________';
+            
+            const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+            const total = subtotal + deliveryCost;
+            
+            details.innerHTML = `
+                <div><strong>العميل:</strong> ${name}</div>
+                <div><strong>الهاتف:</strong> ${phone}</div>
+                <div><strong>المحافظة:</strong> ${gov}</div>
+                <div><strong>التاريخ:</strong> ${new Date().toLocaleDateString('ar-IQ')}</div>
+            `;
+            
+            table.innerHTML = `
+                <tr>
+                    <th>المنتج</th>
+                    <th>السعر</th>
+                </tr>
+                ${cart.map(item => `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>$${item.price}</td>
+                    </tr>
+                `).join('')}
+                <tr>
+                    <td><strong>التوصيل</strong></td>
+                    <td><strong>$${deliveryCost}</strong></td>
+                </tr>
+            `;
+            
+            totalEl.innerHTML = `الإجمالي: $${total}`;
+            
+            preview.style.display = 'block';
+        }
 
-            if (!name) {
-                alert('❌ الرجاء إدخال الاسم الكامل');
-                return;
-            }
+        // تحميل PDF
+        function downloadPDF() {
+            const element = document.getElementById('invoicePreview');
+            const opt = {
+                margin: 1,
+                filename: `فاتورة-${Date.now()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // إرسال عبر واتساب
+        function sendWhatsApp() {
+            const name = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const gov = document.getElementById('governorate').value;
+            const address = document.getElementById('address').value;
             
-            if (!phone) {
-                alert('❌ الرجاء إدخال رقم الهاتف');
-                return;
-            }
+            let message = `🛒 *طلب جديد - Mousa Tech Store*\n\n`;
+            message += `👤 *العميل:* ${name}\n`;
+            message += `📞 *الهاتف:* ${phone}\n`;
+            message += `📍 *المحافظة:* ${gov}\n`;
+            message += `🏠 *العنوان:* ${address}\n\n`;
+            message += `📦 *المنتجات:*\n`;
             
-            if (!governorate) {
-                alert('❌ الرجاء اختيار المحافظة');
-                return;
-            }
+            cart.forEach(item => {
+                message += `• ${item.name} - $${item.price}\n`;
+            });
             
-            if (!address) {
-                alert('❌ الرجاء إدخال العنوان');
+            message += `\n💰 *الإجمالي:* $${cart.reduce((s,i)=>s+i.price,0) + deliveryCost}\n`;
+            message += `💳 *الدفع:* ${selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان'}`;
+            
+            window.open(`https://wa.me/9647717538315?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // تأكيد الطلب
+        function submitOrder() {
+            const name = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const gov = document.getElementById('governorate').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !phone || !gov || !address) {
+                alert('الرجاء ملء جميع الحقول');
                 return;
             }
 
-            // التحقق من وجود منتجات في السلة
-            if (!cart || cart.length === 0) {
-                alert('❌ سلة التسوق فارغة');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            // إنشاء الطلب
             const order = {
                 id: Date.now(),
                 date: new Date().toLocaleString('ar-IQ'),
-                customer: {
-                    name: name,
-                    phone: phone,
-                    phone2: document.getElementById('phone2')?.value.trim() || '',
-                    governorate: governorate,
-                    address: address,
-                    notes: document.getElementById('notes')?.value.trim() || ''
-                },
-                items: cart.map(item => ({
-                    name: item.name,
-                    price: Math.round(item.price/1500),
-                    id: item.id
-                })),
-                subtotal: Math.round(cart.reduce((sum, item) => sum + item.price, 0) / 1500),
-                delivery: Math.round(deliveryCost / 1500),
-                total: Math.round((cart.reduce((sum, item) => sum + item.price, 0) + deliveryCost) / 1500),
+                customer: { name, phone, gov, address },
+                items: cart.map(i => ({ name: i.name, price: i.price })),
+                subtotal: cart.reduce((s,i)=>s+i.price,0),
+                delivery: deliveryCost,
+                total: cart.reduce((s,i)=>s+i.price,0) + deliveryCost,
                 payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
-                status: 'جديد',
-                timestamp: new Date().toISOString()
+                status: 'جديد'
             };
 
-            console.log('✅ تم إنشاء الطلب:', order);
-
-            try {
-                // حفظ الطلب
-                
-                // 1. حفظ في Firebase إذا كان متاح
-                if (typeof db !== 'undefined' && db) {
-                    try {
-                        await db.collection('orders').add(order);
-                        console.log('✅ تم حفظ الطلب في Firebase');
-                    } catch (fbError) {
-                        console.log('⚠️ Firebase غير متاح، استمرار مع localStorage');
-                    }
-                }
-                
-                // 2. حفظ في localStorage
-                let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
-                allOrders.push(order);
-                localStorage.setItem('orders', JSON.stringify(allOrders));
-                
-                // 3. تفريغ السلة
-                localStorage.removeItem('cart');
-                
-                // 4. التوجيه لصفحة الشكر
-                console.log('✅ جاري التوجيه لصفحة الشكر');
+            // حفظ الطلب
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            // تفريغ السلة
+            localStorage.removeItem('cart');
+            
+            // تحميل PDF
+            downloadPDF();
+            
+            // توجيه لصفحة الشكر
+            setTimeout(() => {
                 window.location.href = `thank-you.html?id=${order.id}`;
-                
-            } catch (error) {
-                console.error('❌ خطأ في حفظ الطلب:', error);
-                
-                // في حالة الخطأ، نكمل على الأقل مع localStorage
-                try {
-                    let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
-                    allOrders.push(order);
-                    localStorage.setItem('orders', JSON.stringify(allOrders));
-                    localStorage.removeItem('cart');
-                    window.location.href = `thank-you.html?id=${order.id}`;
-                } catch (finalError) {
-                    alert('حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى');
-                }
-            }
+            }, 1000);
         }
 
-        // ===== تحديث عداد السلة =====
         function updateCartCount() {
             document.querySelectorAll('.cart-count').forEach(el => {
                 el.textContent = cart.length;
             });
         }
 
-        // ===== تشغيل عند تحميل الصفحة =====
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ صفحة الدفع جاهزة');
-            displayOrderSummary();
-            updateCartCount();
-        });
+        displayOrderSummary();
+        updateCartCount();
     </script>
 </body>
-    </html>
+</html>

@@ -691,22 +691,35 @@
         }
 
         // تصدير إلى Excel
-        function exportToExcel() {
-            let csv = "رقم الطلب,التاريخ,العميل,الهاتف,المحافظة,المنتجات,المبلغ,طريقة الدفع,الحالة\n";
-            
-            orders.forEach(order => {
-                const products = order.items?.map(i => i.name).join(' - ') || '';
-                csv += `${order.id},${order.date},${order.customer?.name},${order.customer?.phone},${order.customer?.gov},"${products}",${order.total},${order.payment},${order.status}\n`;
-            });
+        // تصدير Excel مرتب
+function exportToExcel() {
+    // تجهيز البيانات
+    const data = customers.map(c => [
+        c.name,
+        c.phone,
+        c.gov || '',
+        c.address || '',
+        c.orders.length,
+        c.total
+    ]);
 
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'الطلبات.csv';
-            a.click();
-        }
+    // إضافة العنوان
+    data.unshift(['الاسم', 'رقم الهاتف', 'المحافظة', 'العنوان', 'عدد الطلبات', 'إجمالي المشتريات']);
 
+    // تحويل لملف CSV
+    let csv = data.map(row => 
+        row.map(cell => `"${cell}"`).join(',')
+    ).join('\n');
+
+    // تحميل الملف
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'العملاء.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
         function closeModal() {
             document.getElementById('invoiceModal').classList.remove('show');
         }

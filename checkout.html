@@ -6,6 +6,32 @@
     <title>إتمام الطلب - Mousa Tech Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* أنماط إضافية */
+        .checkout-page { padding: 20px 0 80px; }
+        .checkout-title { font-size: 1.8rem; color: #0A0F1F; margin-bottom: 25px; }
+        .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .section-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .section-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: #0A0F1F; display: flex; align-items: center; gap: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-input, .form-select { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; outline: none; }
+        .form-input:focus, .form-select:focus { border-color: #F97316; }
+        .payment-methods { display: flex; flex-direction: column; gap: 10px; }
+        .payment-option { display: flex; align-items: center; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+        .payment-option.selected { border-color: #F97316; background: rgba(249,115,22,0.05); }
+        .payment-option input { display: none; }
+        .payment-icon { width: 40px; height: 40px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-left: 15px; font-size: 1.3rem; }
+        .order-summary { background: white; border-radius: 15px; padding: 25px; position: sticky; top: 100px; }
+        .order-items { max-height: 300px; overflow-y: auto; margin-bottom: 20px; }
+        .order-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .order-item-name { font-size: 0.95rem; }
+        .order-item-price { font-weight: 600; color: #F97316; }
+        .order-total { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-top: 2px solid #e2e8f0; font-size: 1.3rem; font-weight: 700; }
+        .submit-order { width: 100%; background: #F97316; color: white; border: none; padding: 18px; border-radius: 8px; font-size: 1.2rem; font-weight: 600; cursor: pointer; margin-top: 20px; transition: all 0.3s; }
+        .submit-order:hover { background: #EA580C; transform: translateY(-2px); }
+        @media (max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -24,16 +50,23 @@
         <h1 class="checkout-title">✅ إتمام الطلب</h1>
 
         <div class="checkout-grid">
+            <!-- معلومات العميل -->
             <div>
                 <div class="section-card">
-                    <h2 class="section-title">📋 معلومات التوصيل</h2>
+                    <h2 class="section-title"><i class="fas fa-user"></i> معلومات التوصيل</h2>
+                    
                     <div class="form-group">
-                        <input type="text" class="form-input" id="fullName" placeholder="الاسم الكامل">
+                        <label class="form-label">الاسم الكامل *</label>
+                        <input type="text" class="form-input" id="fullName" placeholder="أدخل اسمك الثلاثي">
                     </div>
+                    
                     <div class="form-group">
-                        <input type="tel" class="form-input" id="phone" placeholder="رقم الهاتف">
+                        <label class="form-label">رقم الهاتف *</label>
+                        <input type="tel" class="form-input" id="phone" placeholder="07xx xxx xxxx">
                     </div>
+                    
                     <div class="form-group">
+                        <label class="form-label">المحافظة *</label>
                         <select class="form-select" id="governorate">
                             <option value="">اختر المحافظة</option>
                             <option value="بغداد">بغداد</option>
@@ -42,33 +75,46 @@
                             <option value="الموصل">الموصل</option>
                             <option value="النجف">النجف</option>
                             <option value="كركوك">كركوك</option>
+                            <option value="ديالى">ديالى</option>
                         </select>
                     </div>
+                    
                     <div class="form-group">
-                        <input type="text" class="form-input" id="address" placeholder="العنوان بالتفصيل">
+                        <label class="form-label">العنوان بالتفصيل *</label>
+                        <input type="text" class="form-input" id="address" placeholder="الحي، الشارع، رقم الدار">
                     </div>
                 </div>
 
                 <div class="section-card">
-                    <h2 class="section-title">💳 طريقة الدفع</h2>
-                    <label class="payment-option selected" onclick="selectPayment('cash')">
-                        <input type="radio" name="payment" value="cash" checked hidden>
-                        <div class="payment-icon"><i class="fas fa-money-bill-wave"></i></div>
-                        <div>الدفع عند الاستلام</div>
-                    </label>
-                    <label class="payment-option" onclick="selectPayment('card')">
-                        <input type="radio" name="payment" value="card" hidden>
-                        <div class="payment-icon"><i class="fas fa-credit-card"></i></div>
-                        <div>بطاقة ائتمان</div>
-                    </label>
+                    <h2 class="section-title"><i class="fas fa-credit-card"></i> طريقة الدفع</h2>
+                    
+                    <div class="payment-methods">
+                        <label class="payment-option selected" onclick="selectPayment('cash')">
+                            <input type="radio" name="payment" value="cash" checked hidden>
+                            <div class="payment-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            <div>الدفع عند الاستلام</div>
+                        </label>
+                        
+                        <label class="payment-option" onclick="selectPayment('card')">
+                            <input type="radio" name="payment" value="card" hidden>
+                            <div class="payment-icon"><i class="fas fa-credit-card"></i></div>
+                            <div>بطاقة ائتمان</div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
+            <!-- ملخص الطلب -->
             <div>
                 <div class="order-summary">
-                    <h2 class="section-title">🛍️ ملخص الطلب</h2>
-                    <div id="orderItems" class="order-items"></div>
+                    <h2 class="section-title"><i class="fas fa-shopping-bag"></i> ملخص الطلب</h2>
+                    
+                    <div class="order-items" id="orderItems">
+                        <!-- المنتجات تظهر هنا -->
+                    </div>
+                    
                     <div class="order-total" id="orderTotal"></div>
+                    
                     <button class="submit-order" onclick="submitOrder()">
                         <i class="fas fa-check-circle"></i> تأكيد الطلب
                     </button>
@@ -88,10 +134,11 @@
     <script src="firebase-config.js"></script>
 
     <script>
+        // ===== المتغيرات =====
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let deliveryCost = 0;
         let selectedPayment = 'cash';
 
+        // ===== عرض ملخص الطلب =====
         function displayOrderSummary() {
             const itemsDiv = document.getElementById('orderItems');
             const totalDiv = document.getElementById('orderTotal');
@@ -101,47 +148,53 @@
                 return;
             }
 
-            let subtotal = 0;
+            let total = 0;
             itemsDiv.innerHTML = cart.map(item => {
-                subtotal += Number(item.price) || 0;
-                return `<div class="order-item">
-                    <span class="order-item-name">${item.name}</span>
-                    <span class="order-item-price">$${Number(item.price).toLocaleString()}</span>
-                </div>`;
+                total += Number(item.price) || 0;
+                return `
+                    <div class="order-item">
+                        <span class="order-item-name">${item.name}</span>
+                        <span class="order-item-price">$${Number(item.price).toLocaleString()}</span>
+                    </div>
+                `;
             }).join('');
 
-            const total = subtotal + deliveryCost;
-            totalDiv.innerHTML = `<span>الإجمالي</span><span>$${total.toLocaleString()}</span>`;
-            updateCartCount();
+            totalDiv.innerHTML = `
+                <span>الإجمالي</span>
+                <span>$${total.toLocaleString()}</span>
+            `;
+            
+            document.getElementById('cartCount').textContent = cart.length;
         }
 
+        // ===== اختيار طريقة الدفع =====
         function selectPayment(method) {
             selectedPayment = method;
             document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
         }
 
+        // ===== تأكيد الطلب =====
         async function submitOrder() {
-            const name = document.getElementById('fullName').value;
-            const phone = document.getElementById('phone').value;
+            const name = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
             const gov = document.getElementById('governorate').value;
-            const address = document.getElementById('address').value;
+            const address = document.getElementById('address').value.trim();
 
             if (!name || !phone || !gov || !address) {
                 alert('❌ الرجاء ملء جميع الحقول المطلوبة');
                 return;
             }
 
-            const subtotal = cart.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
-            
             const order = {
                 id: Date.now(),
                 date: new Date().toLocaleString('ar-IQ'),
                 customer: { name, phone, gov, address },
-                items: cart.map(item => ({ name: item.name, price: Number(item.price) || 0 })),
-                subtotal: subtotal,
-                delivery: deliveryCost,
-                total: subtotal + deliveryCost,
+                items: cart.map(item => ({ 
+                    name: item.name, 
+                    price: Number(item.price) || 0 
+                })),
+                total: cart.reduce((sum, item) => sum + (Number(item.price) || 0), 0),
                 payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
                 status: 'جديد',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -171,10 +224,7 @@
             }
         }
 
-        function updateCartCount() {
-            document.getElementById('cartCount').textContent = cart.length;
-        }
-
+        // ===== تشغيل عند تحميل الصفحة =====
         displayOrderSummary();
     </script>
 </body>

@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>لوحة التحكم - Mousa Tech Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية - لوحة التحكم | Mousa Tech Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -13,86 +13,25 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', sans-serif;
         }
-
         body {
             background: #f1f5f9;
-        }
-
-        /* للجوال */
-        .mobile-top-bar {
-            display: none;
-            background: #0A0F1F;
-            color: white;
-            padding: 15px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .mobile-top-bar h2 {
-            color: #F97316;
-            font-size: 1.2rem;
-        }
-
-        .mobile-bottom-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #0A0F1F;
-            color: white;
-            padding: 8px 5px;
-            z-index: 1000;
-            justify-content: space-around;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .mobile-nav-item {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #94a3b8;
-            font-size: 0.7rem;
-            padding: 5px;
-            flex: 1;
         }
-
-        .mobile-nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 3px;
-        }
-
-        .mobile-nav-item.active {
-            color: #F97316;
-        }
-
-        /* للكمبيوتر */
         .sidebar {
-            width: 240px;
+            width: 250px;
             background: #0A0F1F;
             color: white;
             height: 100vh;
             position: fixed;
-            right: 0;
-            top: 0;
             padding: 20px 0;
         }
-
         .logo-area {
             padding: 0 20px 20px;
             border-bottom: 1px solid #334155;
         }
-
         .logo-area h2 {
             color: #F97316;
-            font-size: 1.3rem;
         }
-
         .menu-item {
             padding: 12px 20px;
             display: flex;
@@ -100,99 +39,65 @@
             gap: 12px;
             color: #cbd5e1;
             cursor: pointer;
-            margin: 5px 0;
         }
-
         .menu-item:hover {
             background: #1e293b;
         }
-
         .menu-item.active {
             background: #F97316;
             color: white;
         }
-
         .main-content {
-            margin-right: 240px;
+            margin-right: 250px;
             padding: 20px;
-            min-height: 100vh;
+            width: calc(100% - 250px);
         }
-
-        /* الإحصائيات */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
-
         .stat-card {
             background: white;
-            border-radius: 12px;
-            padding: 20px 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-
-        .stat-icon {
-            width: 45px;
-            height: 45px;
-            background: rgba(249,115,22,0.1);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
             color: #F97316;
         }
-
-        .stat-info h3 {
-            font-size: 1.3rem;
-            color: #0A0F1F;
-        }
-
-        .stat-info p {
-            color: #64748b;
-            font-size: 0.8rem;
-        }
-
-        /* الرسوم البيانية */
         .charts-row {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
         }
-
         .chart-card {
             background: white;
             border-radius: 12px;
             padding: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-
         canvas {
             width: 100% !important;
             height: 200px !important;
         }
-
-        /* الطلبات */
         .recent-orders {
             background: white;
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 20px;
         }
-
         .order-item {
             display: flex;
             align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid #e2e8f0;
         }
-
         .order-number {
             width: 30px;
             height: 30px;
@@ -203,334 +108,149 @@
             align-items: center;
             justify-content: center;
             margin-left: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
         }
-
         .order-info {
             flex: 1;
         }
-
         .order-name {
             font-weight: 600;
-            font-size: 0.9rem;
         }
-
         .order-detail {
             color: #64748b;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
         }
-
         .order-price {
             font-weight: 700;
             color: #F97316;
-            font-size: 0.9rem;
         }
-
-        /* المحافظات */
         .governorates-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
         }
-
         .gov-card {
             background: #f8fafc;
             padding: 12px;
             border-radius: 8px;
             text-align: center;
         }
-
         .gov-name {
             font-weight: 600;
-            font-size: 0.9rem;
         }
-
         .gov-count {
             color: #F97316;
             font-weight: 700;
             margin-top: 5px;
         }
-
-        /* للجوال */
-        @media screen and (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .mobile-top-bar {
-                display: flex;
-            }
-
-            .mobile-bottom-nav {
-                display: flex;
-            }
-
-            .main-content {
-                margin-right: 0;
-                padding: 70px 10px 80px 10px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-right: 0; width: 100%; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .charts-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- شريط الجوال العلوي -->
-    <div class="mobile-top-bar">
-        <h2>Mousa Tech</h2>
-        <div style="display: flex; gap: 15px;">
-            <i class="fas fa-bell"></i>
-            <i class="fas fa-user"></i>
-        </div>
-    </div>
-
-    <!-- الشريط الجانبي للكمبيوتر -->
     <div class="sidebar">
         <div class="logo-area">
             <h2>Mousa Tech</h2>
             <small>لوحة التحكم</small>
         </div>
-
-        <div class="menu-item active" onclick="window.location.href='admin-dashboard.html'">
-            <i class="fas fa-home"></i> <span>الرئيسية</span>
-        </div>
-        <div class="menu-item" onclick="window.location.href='admin-products.html'">
-            <i class="fas fa-box"></i> <span>المنتجات</span>
-        </div>
-        <div class="menu-item" onclick="window.location.href='admin-orders.html'">
-            <i class="fas fa-shopping-cart"></i> <span>الطلبات</span>
-        </div>
-        <div class="menu-item" onclick="window.location.href='admin-customers.html'">
-            <i class="fas fa-users"></i> <span>العملاء</span>
-        </div>
+        <div class="menu-item active">📊 الرئيسية</div>
+        <div class="menu-item" onclick="window.location.href='admin-products.html'">📦 المنتجات</div>
+        <div class="menu-item" onclick="window.location.href='admin-orders.html'">📋 الطلبات</div>
+        <div class="menu-item" onclick="window.location.href='admin-customers.html'">👥 العملاء</div>
     </div>
 
-    <!-- القائمة السفلية للجوال -->
-    <div class="mobile-bottom-nav">
-        <div class="mobile-nav-item active" onclick="window.location.href='admin-dashboard.html'">
-            <i class="fas fa-home"></i> <span>الرئيسية</span>
-        </div>
-        <div class="mobile-nav-item" onclick="window.location.href='admin-products.html'">
-            <i class="fas fa-box"></i> <span>المنتجات</span>
-        </div>
-        <div class="mobile-nav-item" onclick="window.location.href='admin-orders.html'">
-            <i class="fas fa-shopping-cart"></i> <span>الطلبات</span>
-        </div>
-        <div class="mobile-nav-item" onclick="window.location.href='admin-customers.html'">
-            <i class="fas fa-users"></i> <span>العملاء</span>
-        </div>
-    </div>
-
-    <!-- المحتوى الرئيسي -->
     <div class="main-content">
-        <!-- الإحصائيات -->
-        <div class="stats-grid" id="statsContainer">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
-                <div class="stat-info">
-                    <h3 id="totalOrders">0</h3>
-                    <p>إجمالي الطلبات</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
-                <div class="stat-info">
-                    <h3 id="totalRevenue">$0</h3>
-                    <p>إجمالي المبيعات</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
-                <div class="stat-info">
-                    <h3 id="totalCustomers">0</h3>
-                    <p>العملاء</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-box"></i></div>
-                <div class="stat-info">
-                    <h3 id="totalProducts">30</h3>
-                    <p>المنتجات</p>
-                </div>
-            </div>
-        </div>
+        <div class="stats-grid" id="statsContainer"></div>
 
-        <!-- الرسوم البيانية -->
         <div class="charts-row">
             <div class="chart-card">
-                <h3 style="margin-bottom: 10px;">📊 المبيعات</h3>
+                <h3>📈 المبيعات</h3>
                 <canvas id="salesChart"></canvas>
             </div>
             <div class="chart-card">
-                <h3 style="margin-bottom: 10px;">💳 طرق الدفع</h3>
+                <h3>💳 طرق الدفع</h3>
                 <canvas id="paymentChart"></canvas>
             </div>
         </div>
 
-        <!-- الطلبات -->
         <div class="recent-orders">
-            <h3 style="margin-bottom: 15px;">📦 آخر الطلبات</h3>
+            <h3>📦 آخر الطلبات</h3>
             <div id="ordersList"></div>
         </div>
 
-        <!-- المحافظات -->
         <div class="chart-card">
-            <h3 style="margin-bottom: 15px;">🗺️ توزيع المحافظات</h3>
+            <h3>🗺️ توزيع المحافظات</h3>
             <div class="governorates-grid" id="govGrid"></div>
         </div>
     </div>
 
     <script>
-        // ===== جلب الطلبات من localStorage مباشرة =====
-        function loadOrders() {
-            try {
-                // نحاول نجيب الطلبات من localStorage
-                const savedOrders = localStorage.getItem('orders');
-                let orders = [];
-                
-                if (savedOrders) {
-                    orders = JSON.parse(savedOrders);
-                    console.log('✅ تم تحميل الطلبات من localStorage:', orders.length);
-                } else {
-                    // إذا مافي طلبات محفوظة، نستخدم البيانات التجريبية
-                    orders = [
-                        { id: 1771303703396, customer: { name: "Mousa Alnher", governorate: "كرياءه" }, total: 1243, status: "جديد" },
-                        { id: 1771304088415, customer: { name: "Mousa Alnher", governorate: "الموصل" }, total: 3177, status: "جديد" },
-                        { id: 1771308501767, customer: { name: "Mousa Alnher", governorate: "النجف" }, total: 2343, status: "جديد" },
-                        { id: 1771308510492, customer: { name: "Mousa Alnher", governorate: "النجف" }, total: 2343, status: "جديد" },
-                        { id: 1771309598756, customer: { name: "محمد احمد علي فاضل", governorate: "بغداد" }, total: 3777, status: "جديد" }
-                    ];
-                    console.log('✅ تم استخدام الطلبات التجريبية');
-                }
-                
-                // عرض الطلبات
-                displayOrders(orders);
-                
-                // تحديث الإحصائيات
-                updateStats(orders);
-                
-                // تحديث المحافظات
-                updateGovernorates(orders);
-                
-                // تحديث الرسوم البيانية
-                updateCharts(orders);
-                
-            } catch (error) {
-                console.error('❌ خطأ:', error);
-                document.getElementById('ordersList').innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #EF4444;">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>حدث خطأ في تحميل الطلبات</p>
-                    </div>
-                `;
-            }
-        }
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-        // عرض الطلبات
-        function displayOrders(orders) {
-            const container = document.getElementById('ordersList');
-            
-            if (!orders || orders.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #64748b;">
-                        <i class="fas fa-box-open"></i>
-                        <p>لا توجد طلبات</p>
-                    </div>
-                `;
-                return;
-            }
+        // إحصائيات
+        const totalOrders = orders.length;
+        const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+        const uniqueCustomers = new Set(orders.map(o => o.customer?.phone)).size;
 
-            container.innerHTML = orders.map((order, index) => `
-                <div class="order-item">
-                    <div class="order-number">${index + 1}</div>
-                    <div class="order-info">
-                        <div class="order-name">${order.customer?.name || 'بدون اسم'}</div>
-                        <div class="order-detail">#${order.id} • ${order.customer?.governorate || 'بدون محافظة'}</div>
-                    </div>
-                    <div class="order-price">$${order.total || 0}</div>
+        document.getElementById('statsContainer').innerHTML = `
+            <div class="stat-card"><div class="stat-number">${totalOrders}</div><div>إجمالي الطلبات</div></div>
+            <div class="stat-card"><div class="stat-number">$${totalRevenue}</div><div>إجمالي المبيعات</div></div>
+            <div class="stat-card"><div class="stat-number">${uniqueCustomers}</div><div>العملاء</div></div>
+            <div class="stat-card"><div class="stat-number">30</div><div>المنتجات</div></div>
+        `;
+
+        // آخر الطلبات
+        document.getElementById('ordersList').innerHTML = orders.slice(0, 5).map(o => `
+            <div class="order-item">
+                <div class="order-number">•</div>
+                <div class="order-info">
+                    <div class="order-name">${o.customer?.name || 'بدون اسم'}</div>
+                    <div class="order-detail">#${o.id} • ${o.customer?.governorate || ''}</div>
                 </div>
-            `).join('');
-        }
+                <div class="order-price">$${o.total}</div>
+            </div>
+        `).join('') || '<p style="padding:20px; text-align:center;">لا توجد طلبات</p>';
 
-        // تحديث الإحصائيات
-        function updateStats(orders) {
-            const totalOrders = orders.length;
-            const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-            const uniqueCustomers = new Set(orders.map(o => o.customer?.name)).size;
+        // المحافظات
+        const govCount = {};
+        orders.forEach(o => {
+            const gov = o.customer?.governorate || 'أخرى';
+            govCount[gov] = (govCount[gov] || 0) + 1;
+        });
+        document.getElementById('govGrid').innerHTML = Object.entries(govCount).map(([g,c]) => `
+            <div class="gov-card"><div class="gov-name">${g}</div><div class="gov-count">${c} طلب</div></div>
+        `).join('') || '<p style="text-align:center;">لا توجد بيانات</p>';
 
-            document.getElementById('totalOrders').textContent = totalOrders;
-            document.getElementById('totalRevenue').textContent = `$${totalRevenue}`;
-            document.getElementById('totalCustomers').textContent = uniqueCustomers;
-        }
+        // رسم بياني للمبيعات
+        new Chart(document.getElementById('salesChart'), {
+            type: 'line',
+            data: {
+                labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                datasets: [{
+                    data: orders.map(o => o.total).slice(0,7),
+                    borderColor: '#F97316',
+                    backgroundColor: 'rgba(249,115,22,0.1)',
+                }]
+            },
+            options: { plugins: { legend: { display: false } } }
+        });
 
-        // تحديث المحافظات
-        function updateGovernorates(orders) {
-            const govCount = {};
-            orders.forEach(order => {
-                const gov = order.customer?.governorate || 'أخرى';
-                govCount[gov] = (govCount[gov] || 0) + 1;
-            });
-
-            const govGrid = document.getElementById('govGrid');
-            govGrid.innerHTML = Object.entries(govCount).map(([gov, count]) => `
-                <div class="gov-card">
-                    <div class="gov-name">${gov}</div>
-                    <div class="gov-count">${count} طلب</div>
-                </div>
-            `).join('');
-        }
-
-        // تحديث الرسوم البيانية
-        function updateCharts(orders) {
-            // رسم بياني للمبيعات
-            const salesCtx = document.getElementById('salesChart').getContext('2d');
-            new Chart(salesCtx, {
-                type: 'line',
-                data: {
-                    labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-                    datasets: [{
-                        data: [1243, 3177, 2343, 2343, 3777, 0, 0],
-                        borderColor: '#F97316',
-                        backgroundColor: 'rgba(249,115,22,0.1)',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            // رسم بياني لطرق الدفع
-            const paymentCtx = document.getElementById('paymentChart').getContext('2d');
-            new Chart(paymentCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['عند الاستلام', 'بطاقة'],
-                    datasets: [{
-                        data: [80, 20],
-                        backgroundColor: ['#F97316', '#0A0F1F']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-        }
-
-        // تحميل عند فتح الصفحة
-        document.addEventListener('DOMContentLoaded', loadOrders);
+        // رسم بياني لطرق الدفع
+        const cash = orders.filter(o => o.payment === 'عند الاستلام').length;
+        const card = orders.filter(o => o.payment === 'بطاقة ائتمان').length;
+        new Chart(document.getElementById('paymentChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['عند الاستلام', 'بطاقة'],
+                datasets: [{
+                    data: [cash || 1, card || 1],
+                    backgroundColor: ['#F97316', '#0A0F1F']
+                }]
+            }
+        });
     </script>
 </body>
-    </html>
+</html>

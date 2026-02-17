@@ -6,6 +6,7 @@
     <title>لوحة التحكم - Mousa Tech Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ===== التصميم الأساسي ===== */
         * {
             margin: 0;
             padding: 0;
@@ -18,6 +19,7 @@
             padding: 20px;
         }
         
+        /* ===== الهيدر ===== */
         .header {
             background: #0A0F1F;
             color: white;
@@ -29,6 +31,7 @@
             align-items: center;
         }
         
+        /* ===== بطاقات الإحصائيات ===== */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -49,6 +52,7 @@
             color: #F97316;
         }
         
+        /* ===== قائمة الطلبات ===== */
         .orders-list {
             background: white;
             border-radius: 10px;
@@ -86,6 +90,7 @@
             color: #0A0F1F;
         }
         
+        /* ===== زر التحديث ===== */
         .refresh-btn {
             background: #F97316;
             color: white;
@@ -100,6 +105,7 @@
     </style>
 </head>
 <body>
+    <!-- ===== الهيدر مع زر التحديث ===== -->
     <div class="header">
         <h1>👨‍💼 لوحة التحكم - Mousa Tech Store</h1>
         <button class="refresh-btn" onclick="loadOrders()">
@@ -107,6 +113,7 @@
         </button>
     </div>
 
+    <!-- ===== بطاقات الإحصائيات ===== -->
     <div class="stats" id="stats">
         <div class="stat-card">
             <div class="stat-number" id="totalOrders">0</div>
@@ -122,6 +129,7 @@
         </div>
     </div>
 
+    <!-- ===== قائمة الطلبات ===== -->
     <div class="orders-list" id="ordersList">
         <div style="text-align: center; padding: 40px;">
             <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #F97316;"></i>
@@ -129,10 +137,14 @@
         </div>
     </div>
 
+    <!-- ===== مكتبات Firebase ===== -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    
     <script>
-        // إعدادات Firebase
+        // =============================================
+        // إعدادات Firebase - ضع الأرقام الحقيقية هنا
+        // =============================================
         const firebaseConfig = {
             apiKey: "AIzaSyB7kM3XqZ1pQ2rS4tU5vW6xY7zA8bC9dE0fG",
             authDomain: "mousa-tech-store.firebaseapp.com",
@@ -142,72 +154,151 @@
             appId: "1:123456789012:web:abc123def456ghi789jkl"
         };
 
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // =============================================
+        // الدالة الرئيسية: تحميل الطلبات
+        // =============================================
         async function loadOrders() {
             try {
+                // ===== المحاولة الأولى: جلب الطلبات من Firebase =====
+                console.log('🔍 جاري تحميل الطلبات من Firebase...');
                 const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
-                const orders = [];
-                snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+                const firebaseOrders = [];
+                snapshot.forEach(doc => firebaseOrders.push({ id: doc.id, ...doc.data() }));
                 
-                displayOrders(orders);
-                updateStats(orders);
+                console.log(`✅ تم العثور على ${firebaseOrders.length} طلب في Firebase`);
+                
+                // ===== إذا في طلبات في Firebase، نعرضها =====
+                if (firebaseOrders.length > 0) {
+                    displayOrders(firebaseOrders);
+                    updateStats(firebaseOrders);
+                    return;
+                }
+                
+                // ===== المحاولة الثانية: جلب الطلبات من localStorage =====
+                console.log('🔍 لم نجد طلبات في Firebase، نبحث في localStorage...');
+                const localOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                
+                if (localOrders.length > 0) {
+                    console.log(`✅ تم العثور على ${localOrders.length} طلب في localStorage`);
+                    displayOrders(localOrders);
+                    updateStats(localOrders);
+                } else {
+                    // ===== لا توجد طلبات نهائياً =====
+                    console.log('❌ لا توجد طلبات في أي مكان');
+                    showNoOrders();
+                }
+                
             } catch (error) {
-                console.error('خطأ في تحميل الطلبات:', error);
-                document.getElementById('ordersList').innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: red;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
-                        <p>حدث خطأ في تحميل الطلبات</p>
-                    </div>
-                `;
+                // ===== في حالة حدوث خطأ مع Firebase =====
+                console.error('❌ خطأ في الاتصال مع Firebase:', error);
+                
+                // نحاول نعرض الطلبات من localStorage كحل بديل
+                const localOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                
+                if (localOrders.length > 0) {
+                    console.log(`✅ تم العثور على ${localOrders.length} طلب في localStorage (بديل)`);
+                    displayOrders(localOrders);
+                    updateStats(localOrders);
+                } else {
+                    showError('حدث خطأ في تحميل الطلبات من Firebase');
+                }
             }
         }
 
+        // =============================================
+        // دالة عرض الطلبات في الصفحة
+        // =============================================
         function displayOrders(orders) {
             const container = document.getElementById('ordersList');
             
+            // إذا ما في طلبات، نعرض رسالة
             if (orders.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
-                        <i class="fas fa-box-open" style="font-size: 3rem; color: #ccc;"></i>
-                        <p>لا توجد طلبات حالياً</p>
-                    </div>
-                `;
+                showNoOrders();
                 return;
             }
 
+            // تحويل كل طلب إلى HTML
             container.innerHTML = orders.map(order => `
                 <div class="order-item">
                     <div class="order-id">#${order.id}</div>
                     <div>
-                        <div><strong>${order.customer.name}</strong></div>
-                        <div style="font-size: 0.9rem; color: #666;">${order.customer.governorate}</div>
+                        <div><strong>${order.customer?.name || 'بدون اسم'}</strong></div>
+                        <div style="font-size: 0.9rem; color: #666;">${order.customer?.governorate || 'بدون محافظة'}</div>
                     </div>
                     <div style="text-align: left;">
-                        <div class="order-total">$${order.total}</div>
-                        <div class="order-status">${order.status}</div>
+                        <div class="order-total">$${order.total || 0}</div>
+                        <div class="order-status">${order.status || 'جديد'}</div>
                     </div>
                 </div>
             `).join('');
         }
 
+        // =============================================
+        // دالة تحديث الإحصائيات
+        // =============================================
         function updateStats(orders) {
             const total = orders.length;
-            const amount = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-            const today = orders.filter(o => {
+            const amount = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+            
+            // حساب طلبات اليوم
+            const today = orders.filter(order => {
                 const todayDate = new Date().toDateString();
-                const orderDate = new Date(o.timestamp?.toDate()).toDateString();
-                return orderDate === todayDate;
+                // التحقق من وجود timestamp
+                if (order.timestamp) {
+                    const orderDate = new Date(order.timestamp).toDateString();
+                    return orderDate === todayDate;
+                }
+                return false;
             }).length;
 
+            // تحديث الأرقام في الصفحة
             document.getElementById('totalOrders').textContent = total;
             document.getElementById('totalAmount').textContent = `$${amount}`;
             document.getElementById('todayOrders').textContent = today;
         }
 
-        // تحميل أولي
-        loadOrders();
+        // =============================================
+        // دالة عرض رسالة "لا توجد طلبات"
+        // =============================================
+        function showNoOrders() {
+            document.getElementById('ordersList').innerHTML = `
+                <div style="text-align: center; padding: 60px;">
+                    <i class="fas fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 15px;"></i>
+                    <h3 style="color: #666;">لا توجد طلبات حالياً</h3>
+                    <p style="color: #999;">عندما يتم تقديم طلب جديد، سيظهر هنا</p>
+                </div>
+            `;
+            
+            // تحديث الإحصائيات للصفر
+            document.getElementById('totalOrders').textContent = '0';
+            document.getElementById('totalAmount').textContent = '$0';
+            document.getElementById('todayOrders').textContent = '0';
+        }
+
+        // =============================================
+        // دالة عرض رسالة خطأ
+        // =============================================
+        function showError(message) {
+            document.getElementById('ordersList').innerHTML = `
+                <div style="text-align: center; padding: 60px; color: #EF4444;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 4rem; margin-bottom: 15px;"></i>
+                    <h3>خطأ في التحميل</h3>
+                    <p>${message}</p>
+                    <button onclick="loadOrders()" style="margin-top: 20px; padding: 10px 20px; background: #F97316; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                    </button>
+                </div>
+            `;
+        }
+
+        // =============================================
+        // تشغيل التحميل التلقائي عند فتح الصفحة
+        // =============================================
+        document.addEventListener('DOMContentLoaded', loadOrders);
     </script>
 </body>
 </html>

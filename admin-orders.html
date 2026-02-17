@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - Mousa Tech Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .header {
+            background: #0A0F1F;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #F97316;
+        }
+        
+        .orders-list {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .order-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .order-item:hover {
+            background: #f9f9f9;
+        }
+        
+        .order-id {
+            font-weight: 700;
+            color: #0A0F1F;
+        }
+        
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            background: #F97316;
+            color: white;
+        }
+        
+        .order-total {
+            font-weight: 700;
+            color: #0A0F1F;
+        }
+        
+        .refresh-btn {
+            background: #F97316;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👨‍💼 لوحة التحكم - Mousa Tech Store</h1>
+        <button class="refresh-btn" onclick="loadOrders()">
+            <i class="fas fa-sync-alt"></i> تحديث
+        </button>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="totalOrders">0</div>
+            <div>إجمالي الطلبات</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalAmount">$0</div>
+            <div>إجمالي المبيعات</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="todayOrders">0</div>
+            <div>طلبات اليوم</div>
+        </div>
+    </div>
+
+    <div class="orders-list" id="ordersList">
+        <div style="text-align: center; padding: 40px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #F97316;"></i>
+            <p>جاري تحميل الطلبات...</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script>
+        // إعدادات Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB7kM3XqZ1pQ2rS4tU5vW6xY7zA8bC9dE0fG",
+            authDomain: "mousa-tech-store.firebaseapp.com",
+            projectId: "mousa-tech-store",
+            storageBucket: "mousa-tech-store.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abc123def456ghi789jkl"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadOrders() {
+            try {
+                const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
+                const orders = [];
+                snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+                
+                displayOrders(orders);
+                updateStats(orders);
+            } catch (error) {
+                console.error('خطأ في تحميل الطلبات:', error);
+                document.getElementById('ordersList').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: red;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+                        <p>حدث خطأ في تحميل الطلبات</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayOrders(orders) {
+            const container = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-box-open" style="font-size: 3rem; color: #ccc;"></i>
+                        <p>لا توجد طلبات حالياً</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="order-item">
+                    <div class="order-id">#${order.id}</div>
+                    <div>
+                        <div><strong>${order.customer.name}</strong></div>
+                        <div style="font-size: 0.9rem; color: #666;">${order.customer.governorate}</div>
+                    </div>
+                    <div style="text-align: left;">
+                        <div class="order-total">$${order.total}</div>
+                        <div class="order-status">${order.status}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats(orders) {
+            const total = orders.length;
+            const amount = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+            const today = orders.filter(o => {
+                const todayDate = new Date().toDateString();
+                const orderDate = new Date(o.timestamp?.toDate()).toDateString();
+                return orderDate === todayDate;
+            }).length;
+
+            document.getElementById('totalOrders').textContent = total;
+            document.getElementById('totalAmount').textContent = `$${amount}`;
+            document.getElementById('todayOrders').textContent = today;
+        }
+
+        // تحميل أولي
+        loadOrders();
+    </script>
+</body>
+</html>

@@ -503,45 +503,58 @@
         }
 
         // تأكيد الطلب
-        function submitOrder() {
-            const name = document.getElementById('fullName').value;
-            const phone = document.getElementById('phone').value;
-            const gov = document.getElementById('governorate').value;
-            const address = document.getElementById('address').value;
+       async function submitOrder() {
+    const name = document.getElementById('fullName').value;
+    const phone = document.getElementById('phone').value;
+    const gov = document.getElementById('governorate').value;
+    const address = document.getElementById('address').value;
 
-            if (!name || !phone || !gov || !address) {
-                alert('الرجاء ملء جميع الحقول');
-                return;
-            }
+    if (!name || !phone || !gov || !address) {
+        alert('الرجاء ملء جميع الحقول');
+        return;
+    }
 
-            const order = {
-                id: Date.now(),
-                date: new Date().toLocaleString('ar-IQ'),
-                customer: { name, phone, gov, address },
-                items: cart.map(i => ({ name: i.name, price: i.price })),
-                subtotal: cart.reduce((s,i)=>s+i.price,0),
-                delivery: deliveryCost,
-                total: cart.reduce((s,i)=>s+i.price,0) + deliveryCost,
-                payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
-                status: 'جديد'
-            };
+    const order = {
+        id: Date.now(),
+        date: new Date().toLocaleString('ar-IQ'),
+        customer: { name, phone, gov, address },
+        items: cart.map(i => ({ name: i.name, price: i.price })),
+        subtotal: cart.reduce((s,i) => s + i.price, 0),
+        delivery: deliveryCost,
+        total: cart.reduce((s,i) => s + i.price, 0) + deliveryCost,
+        payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
+        status: 'جديد',
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    };
 
-            // حفظ الطلب
-            let orders = JSON.parse(localStorage.getItem('orders')) || [];
-            orders.push(order);
-            localStorage.setItem('orders', JSON.stringify(orders));
-            
-            // تفريغ السلة
-            localStorage.removeItem('cart');
-            
-            // تحميل PDF
-            downloadPDF();
-            
-            // توجيه لصفحة الشكر
-            setTimeout(() => {
-                window.location.href = `thank-you.html?id=${order.id}`;
-            }, 1000);
-        }
+    try {
+        // حفظ في Firebase
+        await db.collection('orders').add(order);
+        console.log('✅ تم حفظ الطلب في Firebase');
+        
+        // حفظ في localStorage احتياطي
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        orders.push(order);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        
+        // تفريغ السلة
+        localStorage.removeItem('cart');
+        
+        // تحميل PDF
+        downloadPDF();
+        
+        // توجيه لصفحة الشكر
+        setTimeout(() => {
+            window.location.href = `thank-you.html?id=${order.id}`;
+        }, 1000);
+        
+    } catch (error) {
+        console.error('خطأ في Firebase:', error);
+        alert('تم حفظ الطلب محلياً');
+        localStorage.removeItem('cart');
+        window.location.href = `thank-you.html?id=${order.id}`;
+    }
+}
 
         function updateCartCount() {
             document.querySelectorAll('.cart-count').forEach(el => {

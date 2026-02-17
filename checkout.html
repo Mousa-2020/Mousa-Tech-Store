@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* أنماط إضافية */
         .checkout-page { padding: 20px 0 80px; }
         .checkout-title { font-size: 1.8rem; color: #0A0F1F; margin-bottom: 25px; }
         .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
@@ -75,7 +74,6 @@
                             <option value="الموصل">الموصل</option>
                             <option value="النجف">النجف</option>
                             <option value="كركوك">كركوك</option>
-                            <option value="ديالى">ديالى</option>
                         </select>
                     </div>
                     
@@ -109,9 +107,7 @@
                 <div class="order-summary">
                     <h2 class="section-title"><i class="fas fa-shopping-bag"></i> ملخص الطلب</h2>
                     
-                    <div class="order-items" id="orderItems">
-                        <!-- المنتجات تظهر هنا -->
-                    </div>
+                    <div class="order-items" id="orderItems"></div>
                     
                     <div class="order-total" id="orderTotal"></div>
                     
@@ -123,17 +119,26 @@
         </div>
     </div>
 
-    <a href="https://wa.me/9647717538315" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
     <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
-    <script src="firebase-config.js"></script>
-
     <script>
+        // ===== إعدادات Firebase مباشرة =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyBEk2TemPijtg6dHCd0dFLOzciXUIZCOHA",
+            authDomain: "mousa-tech-store.firebaseapp.com",
+            projectId: "mousa-tech-store",
+            storageBucket: "mousa-tech-store.firebasestorage.app",
+            messagingSenderId: "395430710427",
+            appId: "1:395430710427:web:c914a92653225535010a3e"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        console.log('✅ Firebase initialized');
+
         // ===== المتغيرات =====
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let selectedPayment = 'cash';
@@ -176,36 +181,60 @@
 
         // ===== تأكيد الطلب =====
         async function submitOrder() {
+            console.log('✅ تم الضغط على تأكيد الطلب');
+            
             const name = document.getElementById('fullName').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const gov = document.getElementById('governorate').value;
             const address = document.getElementById('address').value.trim();
 
-            if (!name || !phone || !gov || !address) {
-                alert('❌ الرجاء ملء جميع الحقول المطلوبة');
+            // التحقق من الحقول
+            if (!name) {
+                alert('❌ الرجاء إدخال الاسم');
                 return;
             }
+            if (!phone) {
+                alert('❌ الرجاء إدخال رقم الهاتف');
+                return;
+            }
+            if (!gov) {
+                alert('❌ الرجاء اختيار المحافظة');
+                return;
+            }
+            if (!address) {
+                alert('❌ الرجاء إدخال العنوان');
+                return;
+            }
+
+            // حساب الإجمالي
+            const totalAmount = cart.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
 
             const order = {
                 id: Date.now(),
                 date: new Date().toLocaleString('ar-IQ'),
-                customer: { name, phone, gov, address },
+                customer: { 
+                    name: name,
+                    phone: phone,
+                    gov: gov,
+                    address: address 
+                },
                 items: cart.map(item => ({ 
                     name: item.name, 
                     price: Number(item.price) || 0 
                 })),
-                total: cart.reduce((sum, item) => sum + (Number(item.price) || 0), 0),
+                total: totalAmount,
                 payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
-                status: 'جديد',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                status: 'جديد'
             };
+
+            console.log('✅ الطلب:', order);
 
             try {
                 // حفظ في Firebase
-                await db.collection('orders').add(order);
-                console.log('✅ تم حفظ الطلب في Firebase');
+                const docRef = await db.collection('orders').add(order);
+                console.log('✅ تم حفظ الطلب في Firebase:', docRef.id);
                 
-                // حفظ في localStorage احتياطي
+                // حفظ في localStorage
                 let orders = JSON.parse(localStorage.getItem('orders')) || [];
                 orders.push(order);
                 localStorage.setItem('orders', JSON.stringify(orders));
@@ -218,8 +247,15 @@
                 
             } catch (error) {
                 console.error('❌ خطأ في Firebase:', error);
-                alert('⚠️ تم حفظ الطلب محلياً');
+                
+                // حفظ في localStorage فقط
+                let orders = JSON.parse(localStorage.getItem('orders')) || [];
+                orders.push(order);
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
                 localStorage.removeItem('cart');
+                
+                alert('⚠️ تم حفظ الطلب محلياً');
                 window.location.href = `thank-you.html?id=${order.id}`;
             }
         }

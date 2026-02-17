@@ -6,7 +6,6 @@
     <title>سلة التسوق - Mousa Tech Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico">
     <style>
         .cart-page {
             padding: 20px 0 80px;
@@ -24,16 +23,6 @@
             color: var(--primary);
         }
         
-        .clear-cart {
-            background: none;
-            border: 2px solid var(--border);
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: var(--gray);
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
         .cart-items {
             background: white;
             border-radius: 12px;
@@ -46,10 +35,6 @@
             align-items: center;
             padding: 15px;
             border-bottom: 1px solid var(--border);
-        }
-        
-        .cart-item:last-child {
-            border-bottom: none;
         }
         
         .cart-item-image {
@@ -81,6 +66,7 @@
         .cart-item-price {
             color: var(--secondary);
             font-weight: 700;
+            font-size: 1.1rem;
         }
         
         .cart-item-actions {
@@ -89,29 +75,12 @@
             gap: 10px;
         }
         
-        .quantity-btn {
-            background: none;
-            border: 2px solid var(--border);
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--primary);
-        }
-        
-        .quantity {
-            font-weight: 600;
-            min-width: 30px;
-            text-align: center;
-        }
-        
         .remove-item {
             background: none;
             border: none;
             color: #EF4444;
             cursor: pointer;
             font-size: 1.2rem;
-            margin-right: 10px;
         }
         
         .cart-summary {
@@ -159,29 +128,23 @@
             color: var(--gray);
         }
         
-        .empty-cart i {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            opacity: 0.3;
-        }
-        
-        .continue-shopping {
-            display: inline-block;
-            margin-top: 20px;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-wrap: wrap;
+            }
+            
+            .cart-item-actions {
+                width: 100%;
+                margin-top: 10px;
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <a href="index.html">
-                <img src="logo.png" alt="Mousa Tech Store" class="logo">
-            </a>
+            <a href="index.html"><img src="logo.png" alt="Mousa Tech Store" class="logo"></a>
             <div class="header-buttons">
                 <button class="icon-btn" onclick="window.location.href='cart.html'">
                     <i class="fas fa-shopping-cart"></i>
@@ -197,60 +160,55 @@
     <div class="container cart-page">
         <div class="cart-header">
             <h1 class="cart-title">🛒 سلة التسوق</h1>
-            <button class="clear-cart" onclick="clearCart()">
-                <i class="fas fa-trash"></i> تفريغ السلة
+            <button class="clear-cart" onclick="clearCart()" style="background: none; border: 2px solid var(--border); padding: 8px 16px; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-trash"></i> تفريغ
             </button>
         </div>
 
-        <div id="cartItems" class="cart-items">
-            <!-- السلة تظهر هنا -->
-        </div>
-
-        <div class="cart-summary" id="cartSummary">
-            <!-- ملخص السلة يظهر هنا -->
-        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div id="cartSummary" class="cart-summary"></div>
     </div>
 
     <a href="https://wa.me/9647717538315" class="whatsapp-float" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <script src="products.js"></script>
     <script>
+        // جلب السلة
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+        // عرض السلة
         function displayCart() {
-            const cartContainer = document.getElementById('cartItems');
-            const summaryContainer = document.getElementById('cartSummary');
-            
+            const container = document.getElementById('cartItems');
+            const summary = document.getElementById('cartSummary');
+
             if (cart.length === 0) {
-                cartContainer.innerHTML = `
+                container.innerHTML = `
                     <div class="empty-cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <h3>سلة التسوق فارغة</h3>
-                        <p>أضف بعض المنتجات لتتمكن من الشراء</p>
-                        <a href="index.html" class="continue-shopping">
-                            <i class="fas fa-arrow-right"></i> تصفح المنتجات
+                        <i class="fas fa-shopping-cart" style="font-size: 4rem;"></i>
+                        <h3>السلة فارغة</h3>
+                        <a href="index.html" style="display: inline-block; margin-top: 20px; background: var(--secondary); color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none;">
+                            تصفح المنتجات
                         </a>
                     </div>
                 `;
-                summaryContainer.innerHTML = '';
+                summary.innerHTML = '';
                 return;
             }
 
-            let cartHTML = '';
             let total = 0;
-
-            cart.forEach((item, index) => {
-                total += item.price;
-                cartHTML += `
+            container.innerHTML = cart.map((item, index) => {
+                const price = Number(item.price) || 0;
+                total += price;
+                
+                return `
                     <div class="cart-item">
                         <div class="cart-item-image">
                             <img src="${item.image}" alt="${item.name}">
                         </div>
                         <div class="cart-item-details">
                             <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">$${Math.round(item.price/1500)}</div>
+                            <div class="cart-item-price">$${price.toLocaleString()}</div>
                         </div>
                         <div class="cart-item-actions">
                             <button class="remove-item" onclick="removeFromCart(${index})">
@@ -259,43 +217,42 @@
                         </div>
                     </div>
                 `;
-            });
+            }).join('');
 
-            cartContainer.innerHTML = cartHTML;
-            
-            summaryContainer.innerHTML = `
+            summary.innerHTML = `
                 <div class="summary-row">
                     <span>المجموع</span>
-                    <span>$${Math.round(total/1500)}</span>
-                </div>
-                <div class="summary-row">
-                    <span>التوصيل</span>
-                    <span>سيتحدد لاحقاً</span>
+                    <span>$${total.toLocaleString()}</span>
                 </div>
                 <div class="summary-row total">
                     <span>الإجمالي</span>
-                    <span>$${Math.round(total/1500)}</span>
+                    <span>$${total.toLocaleString()}</span>
                 </div>
                 <button class="checkout-btn" onclick="checkout()">
                     <i class="fas fa-credit-card"></i> إتمام الطلب
                 </button>
             `;
-            
+
             updateCartCount();
         }
 
+        // حذف منتج
         function removeFromCart(index) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             displayCart();
         }
 
+        // تفريغ السلة
         function clearCart() {
-            cart = [];
-            localStorage.setItem('cart', JSON.stringify(cart));
-            displayCart();
+            if (confirm('تفريغ السلة؟')) {
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                displayCart();
+            }
         }
 
+        // التوجه للدفع
         function checkout() {
             if (cart.length === 0) {
                 alert('السلة فارغة');
@@ -304,6 +261,7 @@
             window.location.href = 'checkout.html';
         }
 
+        // تحديث عداد السلة
         function updateCartCount() {
             document.querySelectorAll('.cart-count').forEach(el => {
                 el.textContent = cart.length;

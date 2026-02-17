@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الطلب - Mousa Tech Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        .checkout-page {
+            padding: 20px 0 80px;
+        }
+        
+        .checkout-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--secondary);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-option.selected {
+            border-color: var(--secondary);
+            background: rgba(249,115,22,0.05);
+        }
+        
+        .payment-option input {
+            display: none;
+        }
+        
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .payment-details {
+            flex: 1;
+        }
+        
+        .payment-name {
+            font-weight: 600;
+        }
+        
+        .payment-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .order-summary {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .order-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-item-name {
+            font-size: 0.9rem;
+        }
+        
+        .order-item-price {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid var(--border);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .submit-order {
+            width: 100%;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .governorates {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html">
+                <img src="logo.png" alt="Mousa Tech Store" class="logo">
+            </a>
+            <div class="header-buttons">
+                <button class="icon-btn" onclick="window.location.href='cart.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </button>
+                <button class="icon-btn" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container checkout-page">
+        <h1 class="checkout-title">✅ إتمام الطلب</h1>
+
+        <div class="checkout-grid">
+            <!-- الجانب الأيمن - معلومات العميل -->
+            <div>
+                <div class="section-card">
+                    <h2 class="section-title">📋 معلومات التوصيل</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label">الاسم الكامل</label>
+                        <input type="text" class="form-input" id="fullName" placeholder="أدخل اسمك الثلاثي">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input type="tel" class="form-input" id="phone" placeholder="07xx xxx xxxx">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">رقم هاتف احتياطي (اختياري)</label>
+                        <input type="tel" class="form-input" id="phone2" placeholder="07xx xxx xxxx">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">المحافظة</label>
+                        <select class="form-select" id="governorate" onchange="updateDeliveryCost()">
+                            <option value="">اختر المحافظة</option>
+                            <option value="بغداد">بغداد</option>
+                            <option value="أربيل">أربيل</option>
+                            <option value="البصرة">البصرة</option>
+                            <option value="الموصل">الموصل</option>
+                            <option value="النجف">النجف</option>
+                            <option value="كربلاء">كربلاء</option>
+                            <option value="كركوك">كركوك</option>
+                            <option value="ديالى">ديالى</option>
+                            <option value="ذي قار">ذي قار</option>
+                            <option value="صلاح الدين">صلاح الدين</option>
+                            <option value="بابل">بابل</option>
+                            <option value="واسط">واسط</option>
+                            <option value="ميسان">ميسان</option>
+                            <option value="المثنى">المثنى</option>
+                            <option value="القادسية">القادسية</option>
+                            <option value="الأنبار">الأنبار</option>
+                            <option value="دهوك">دهوك</option>
+                            <option value="السليمانية">السليمانية</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">العنوان بالتفصيل</label>
+                        <input type="text" class="form-input" id="address" placeholder="الحي، الشارع، رقم الدار">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات للمندوب (اختياري)</label>
+                        <input type="text" class="form-input" id="notes" placeholder="أوقات التوصيل المناسبة...">
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2 class="section-title">💳 طريقة الدفع</h2>
+                    
+                    <div class="payment-methods">
+                        <label class="payment-option selected" onclick="selectPayment('cash')">
+                            <input type="radio" name="payment" value="cash" checked hidden>
+                            <div class="payment-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="payment-details">
+                                <div class="payment-name">الدفع عند الاستلام</div>
+                                <div class="payment-desc">تدفع للمندوب عند استلام الطلب</div>
+                            </div>
+                        </label>
+                        
+                        <label class="payment-option" onclick="selectPayment('card')">
+                            <input type="radio" name="payment" value="card" hidden>
+                            <div class="payment-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="payment-details">
+                                <div class="payment-name">بطاقة ائتمان</div>
+                                <div class="payment-desc">ماستركارد - فيزا - كي كارد</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الجانب الأيسر - ملخص الطلب -->
+            <div>
+                <div class="order-summary">
+                    <h2 class="section-title">🛍️ ملخص الطلب</h2>
+                    
+                    <div class="order-items" id="orderItems">
+                        <!-- المنتجات تظهر هنا -->
+                    </div>
+                    
+                    <div class="order-total" id="orderTotal">
+                        <span>الإجمالي</span>
+                        <span>$0</span>
+                    </div>
+                    
+                    <button class="submit-order" onclick="submitOrder()">
+                        <i class="fas fa-check-circle"></i> تأكيد الطلب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/9647717538315" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="products.js"></script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let deliveryCost = 0;
+        let selectedPayment = 'cash';
+
+        function displayOrderSummary() {
+            const orderItems = document.getElementById('orderItems');
+            const orderTotal = document.getElementById('orderTotal');
+            
+            if (cart.length === 0) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            let itemsHTML = '';
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                subtotal += item.price;
+                itemsHTML += `
+                    <div class="order-item">
+                        <span class="order-item-name">${item.name}</span>
+                        <span class="order-item-price">$${Math.round(item.price/1500)}</span>
+                    </div>
+                `;
+            });
+
+            orderItems.innerHTML = itemsHTML;
+            
+            let total = subtotal + deliveryCost;
+            orderTotal.innerHTML = `
+                <span>الإجمالي</span>
+                <span>$${Math.round(total/1500)}</span>
+            `;
+        }
+
+        function updateDeliveryCost() {
+            const gov = document.getElementById('governorate').value;
+            
+            if (gov === 'بغداد') {
+                deliveryCost = 5000;
+            } else if (gov) {
+                deliveryCost = 15000;
+            } else {
+                deliveryCost = 0;
+            }
+            
+            displayOrderSummary();
+        }
+
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const governorate = document.getElementById('governorate').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !phone || !governorate || !address) {
+                alert('الرجاء ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            const order = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                customer: {
+                    name,
+                    phone,
+                    phone2: document.getElementById('phone2').value,
+                    governorate,
+                    address,
+                    notes: document.getElementById('notes').value
+                },
+                items: cart,
+                subtotal: Math.round(cart.reduce((sum, item) => sum + item.price, 0)/1500),
+                delivery: Math.round(deliveryCost/1500),
+                total: Math.round((cart.reduce((sum, item) => sum + item.price, 0) + deliveryCost)/1500),
+                payment: selectedPayment === 'cash' ? 'عند الاستلام' : 'بطاقة ائتمان',
+                status: 'جديد'
+            };
+
+            console.log('طلب جديد:', order);
+            
+            localStorage.removeItem('cart');
+            window.location.href = `thank-you.html?id=${order.id}`;
+        }
+
+        displayOrderSummary();
+        updateCartCount();
+
+        function updateCartCount() {
+            document.querySelectorAll('.cart-count').forEach(el => {
+                el.textContent = cart.length;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -2,26 +2,47 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- هذا السطر أهم شيء للجوال -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>الرئيسية - لوحة التحكم | Mousa Tech Store</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js للرسوم البيانية -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* ===== reset ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         body {
             background: #f1f5f9;
         }
 
-        /* ===== للجوال: إخفاء الشريط الجانبي واستخدام القائمة السفلية ===== */
-        .mobile-nav {
+        /* ===== للجوال: شريط علوي + سفلي ===== */
+        .mobile-top-bar {
+            display: none;
+            background: #0A0F1F;
+            color: white;
+            padding: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-top-bar h2 {
+            color: #F97316;
+            font-size: 1.2rem;
+        }
+
+        .mobile-bottom-nav {
             display: none;
             position: fixed;
             bottom: 0;
@@ -29,7 +50,7 @@
             right: 0;
             background: #0A0F1F;
             color: white;
-            padding: 10px;
+            padding: 8px 5px;
             z-index: 1000;
             justify-content: space-around;
             border-radius: 20px 20px 0 0;
@@ -39,9 +60,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #cbd5e1;
-            font-size: 0.75rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
             padding: 5px;
+            flex: 1;
         }
 
         .mobile-nav-item i {
@@ -53,21 +75,21 @@
             color: #F97316;
         }
 
-        /* ===== الشريط الجانبي للكمبيوتر ===== */
+        /* ===== الشريط الجانبي للتابلت والكمبيوتر ===== */
         .sidebar {
-            width: 250px;
+            width: 240px;
             background: #0A0F1F;
             color: white;
             height: 100vh;
             position: fixed;
+            right: 0;
+            top: 0;
             padding: 20px 0;
-            overflow-y: auto;
         }
 
         .logo-area {
             padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
         }
 
         .logo-area h2 {
@@ -87,55 +109,28 @@
             gap: 12px;
             color: #cbd5e1;
             cursor: pointer;
-            transition: all 0.3s;
+            margin: 5px 0;
             font-size: 0.9rem;
         }
 
         .menu-item:hover {
-            background: rgba(249,115,22,0.1);
-            color: #F97316;
+            background: #1e293b;
         }
 
         .menu-item.active {
             background: #F97316;
             color: white;
-            border-radius: 0 25px 25px 0;
         }
 
         .menu-item i {
             width: 20px;
-            font-size: 1rem;
         }
 
         /* ===== المحتوى الرئيسي ===== */
         .main-content {
-            margin-right: 250px;
+            margin-right: 240px;
             padding: 20px;
-        }
-
-        /* ===== الهيدر العلوي للجوال ===== */
-        .mobile-header {
-            display: none;
-            background: #0A0F1F;
-            color: white;
-            padding: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .mobile-header h2 {
-            color: #F97316;
-            font-size: 1.2rem;
-        }
-
-        .menu-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
+            min-height: 100vh;
         }
 
         /* ===== بطاقات الإحصائيات ===== */
@@ -149,33 +144,33 @@
         .stat-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 20px 15px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .stat-icon {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: rgba(249,115,22,0.1);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #F97316;
         }
 
         .stat-info h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #0A0F1F;
         }
 
         .stat-info p {
             color: #64748b;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         /* ===== الرسوم البيانية ===== */
@@ -189,7 +184,7 @@
         .chart-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
@@ -203,28 +198,8 @@
         }
 
         .chart-header h3 {
+            font-size: 0.95rem;
             color: #0A0F1F;
-            font-size: 1rem;
-        }
-
-        .chart-period {
-            display: flex;
-            gap: 5px;
-        }
-
-        .period-btn {
-            background: none;
-            border: 1px solid #e2e8f0;
-            padding: 5px 10px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .period-btn.active {
-            background: #F97316;
-            color: white;
-            border-color: #F97316;
         }
 
         canvas {
@@ -232,31 +207,26 @@
             height: 200px !important;
         }
 
-        /* ===== قائمة المنتجات ===== */
-        .top-products {
+        /* ===== آخر الطلبات ===== */
+        .recent-orders {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 20px;
         }
 
-        .top-products h3 {
-            font-size: 1rem;
-            margin-bottom: 15px;
-        }
-
-        .product-rank {
+        .order-item {
             display: flex;
             align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid #e2e8f0;
         }
 
-        .product-rank:last-child {
+        .order-item:last-child {
             border-bottom: none;
         }
 
-        .rank-number {
+        .order-number {
             width: 30px;
             height: 30px;
             background: #F97316;
@@ -265,26 +235,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
             margin-left: 12px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 700;
         }
 
-        .product-info {
+        .order-info {
             flex: 1;
         }
 
-        .product-name {
+        .order-name {
             font-weight: 600;
             font-size: 0.9rem;
         }
 
-        .product-category {
+        .order-detail {
             color: #64748b;
             font-size: 0.75rem;
         }
 
-        .product-sales {
+        .order-price {
             font-weight: 700;
             color: #F97316;
             font-size: 0.9rem;
@@ -293,66 +263,65 @@
         /* ===== توزيع المحافظات ===== */
         .governorates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
-            margin-top: 15px;
         }
 
-        .governorate-card {
+        .gov-card {
             background: #f8fafc;
             padding: 12px;
             border-radius: 8px;
             text-align: center;
         }
 
-        .governorate-name {
+        .gov-name {
             font-weight: 600;
             font-size: 0.9rem;
         }
 
-        .governorate-count {
+        .gov-count {
             color: #F97316;
             font-weight: 700;
             margin-top: 5px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
-        /* ===== تحسينات الجوال ===== */
-        @media (max-width: 768px) {
+        /* ===== تحسينات الجوال (أقل من 768px) ===== */
+        @media screen and (max-width: 768px) {
             .sidebar {
                 display: none;
             }
 
-            .mobile-header {
+            .mobile-top-bar {
                 display: flex;
             }
 
-            .mobile-nav {
+            .mobile-bottom-nav {
                 display: flex;
             }
 
             .main-content {
                 margin-right: 0;
-                padding: 15px 15px 80px 15px;
+                padding: 70px 10px 80px 10px;
             }
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
+                gap: 8px;
             }
 
             .stat-card {
-                padding: 15px;
+                padding: 12px;
             }
 
             .stat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
             }
 
             .stat-info h3 {
-                font-size: 1.2rem;
+                font-size: 1rem;
             }
 
             .charts-row {
@@ -360,27 +329,18 @@
             }
 
             .chart-card {
-                padding: 15px;
+                padding: 10px;
             }
 
-            .chart-header h3 {
-                font-size: 0.9rem;
-            }
-
-            .period-btn {
-                padding: 4px 8px;
-                font-size: 0.7rem;
+            canvas {
+                height: 180px !important;
             }
         }
 
-        /* تحسينات للشاشات الصغيرة جداً */
-        @media (max-width: 480px) {
+        /* للشاشات الصغيرة جداً */
+        @media screen and (max-width: 480px) {
             .stats-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .stat-card {
-                padding: 12px;
             }
 
             .governorates-grid {
@@ -390,12 +350,13 @@
     </style>
 </head>
 <body>
-    <!-- ===== الهيدر العلوي للجوال ===== -->
-    <div class="mobile-header">
+    <!-- ===== الشريط العلوي للجوال ===== -->
+    <div class="mobile-top-bar">
         <h2>Mousa Tech</h2>
-        <button class="menu-toggle" onclick="toggleMobileMenu()">
-            <i class="fas fa-bars"></i>
-        </button>
+        <div style="display: flex; gap: 15px;">
+            <i class="fas fa-bell"></i>
+            <i class="fas fa-user"></i>
+        </div>
     </div>
 
     <!-- ===== الشريط الجانبي للكمبيوتر ===== -->
@@ -428,7 +389,7 @@
     </div>
 
     <!-- ===== القائمة السفلية للجوال ===== -->
-    <div class="mobile-nav">
+    <div class="mobile-bottom-nav">
         <div class="mobile-nav-item active" onclick="window.location.href='admin-dashboard.html'">
             <i class="fas fa-home"></i>
             <span>الرئيسية</span>
@@ -449,60 +410,46 @@
 
     <!-- ===== المحتوى الرئيسي ===== -->
     <div class="main-content">
-        <!-- ===== بطاقات الإحصائيات ===== -->
+        <!-- بطاقات الإحصائيات -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
                 <div class="stat-info">
-                    <h3 id="totalOrders">5</h3>
+                    <h3>5</h3>
                     <p>إجمالي الطلبات</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
                 <div class="stat-info">
-                    <h3 id="totalRevenue">$12,883</h3>
+                    <h3>$12,883</h3>
                     <p>إجمالي المبيعات</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
                 <div class="stat-info">
-                    <h3 id="totalCustomers">4</h3>
+                    <h3>4</h3>
                     <p>العملاء</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-box"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-box"></i></div>
                 <div class="stat-info">
-                    <h3 id="totalProducts">30</h3>
+                    <h3>30</h3>
                     <p>المنتجات</p>
                 </div>
             </div>
         </div>
 
-        <!-- ===== الرسوم البيانية ===== -->
+        <!-- الرسوم البيانية -->
         <div class="charts-row">
             <div class="chart-card">
                 <div class="chart-header">
                     <h3>📊 المبيعات خلال الأسبوع</h3>
-                    <div class="chart-period">
-                        <button class="period-btn active">أسبوع</button>
-                        <button class="period-btn">شهر</button>
-                        <button class="period-btn">سنة</button>
-                    </div>
                 </div>
                 <canvas id="salesChart"></canvas>
             </div>
-
             <div class="chart-card">
                 <div class="chart-header">
                     <h3>💳 طرق الدفع</h3>
@@ -511,83 +458,57 @@
             </div>
         </div>
 
-        <!-- ===== آخر الطلبات ===== -->
-        <div class="top-products">
-            <h3>📦 آخر الطلبات</h3>
-            <div id="recentOrders">
-                <div class="product-rank">
-                    <div class="rank-number">1</div>
-                    <div class="product-info">
-                        <div class="product-name">Mousa Ahner</div>
-                        <div class="product-category">#1771303703396 • الموصل</div>
-                    </div>
-                    <div class="product-sales">$1243</div>
-                </div>
-                <div class="product-rank">
-                    <div class="rank-number">2</div>
-                    <div class="product-info">
-                        <div class="product-name">Mousa Ahner</div>
-                        <div class="product-category">#1771304088415 • المنوفية</div>
-                    </div>
-                    <div class="product-sales">$3177</div>
-                </div>
-                <div class="product-rank">
-                    <div class="rank-number">3</div>
-                    <div class="product-info">
-                        <div class="product-name">Mousa Ahner</div>
-                        <div class="product-category">#1771308501767 • الجمعة</div>
-                    </div>
-                    <div class="product-sales">$2343</div>
-                </div>
-                <div class="product-rank">
-                    <div class="rank-number">4</div>
-                    <div class="product-info">
-                        <div class="product-name">Mousa Ahner</div>
-                        <div class="product-category">#1771308510492 • السبت</div>
-                    </div>
-                    <div class="product-sales">$2343</div>
-                </div>
-                <div class="product-rank">
-                    <div class="rank-number">5</div>
-                    <div class="product-info">
-                        <div class="product-name">محمد أحمد على فاضل</div>
-                        <div class="product-category">#1771309598756 • بقضاء</div>
-                    </div>
-                    <div class="product-sales">$3777</div>
-                </div>
-            </div>
+        <!-- آخر الطلبات -->
+        <div class="recent-orders">
+            <h3 style="margin-bottom: 15px;">📦 آخر الطلبات</h3>
+            <div id="ordersList"></div>
         </div>
 
-        <!-- ===== توزيع المحافظات ===== -->
+        <!-- توزيع المحافظات -->
         <div class="chart-card">
-            <h3 style="margin-bottom: 15px;">🗺️ توزيع الطلبات</h3>
-            <div class="governorates-grid">
-                <div class="governorate-card">
-                    <div class="governorate-name">الموصل</div>
-                    <div class="governorate-count">1 طلب</div>
-                </div>
-                <div class="governorate-card">
-                    <div class="governorate-name">المنوفية</div>
-                    <div class="governorate-count">1 طلب</div>
-                </div>
-                <div class="governorate-card">
-                    <div class="governorate-name">الجمعة</div>
-                    <div class="governorate-count">1 طلب</div>
-                </div>
-                <div class="governorate-card">
-                    <div class="governorate-name">السبت</div>
-                    <div class="governorate-count">1 طلب</div>
-                </div>
-                <div class="governorate-card">
-                    <div class="governorate-name">بقضاء</div>
-                    <div class="governorate-count">1 طلب</div>
-                </div>
-            </div>
+            <h3 style="margin-bottom: 15px;">🗺️ توزيع المحافظات</h3>
+            <div class="governorates-grid" id="govGrid"></div>
         </div>
     </div>
 
     <script>
-        // ===== الرسوم البيانية =====
+        // بيانات الطلبات
+        const orders = [
+            { name: "Mousa Ahner", id: "#1771303703396", gov: "الموصل", price: 1243 },
+            { name: "Mousa Ahner", id: "#1771304088415", gov: "المنوفية", price: 3177 },
+            { name: "Mousa Ahner", id: "#1771308501767", gov: "الجمعة", price: 2343 },
+            { name: "Mousa Ahner", id: "#1771308510492", gov: "السبت", price: 2343 },
+            { name: "محمد أحمد على فاضل", id: "#1771309598756", gov: "بقضاء", price: 3777 }
+        ];
+
+        // عرض آخر الطلبات
+        const ordersList = document.getElementById('ordersList');
+        ordersList.innerHTML = orders.map((order, index) => `
+            <div class="order-item">
+                <div class="order-number">${index + 1}</div>
+                <div class="order-info">
+                    <div class="order-name">${order.name}</div>
+                    <div class="order-detail">${order.id} • ${order.gov}</div>
+                </div>
+                <div class="order-price">$${order.price}</div>
+            </div>
+        `).join('');
+
+        // عرض توزيع المحافظات
+        const govCount = {};
+        orders.forEach(order => {
+            govCount[order.gov] = (govCount[order.gov] || 0) + 1;
+        });
+
+        const govGrid = document.getElementById('govGrid');
+        govGrid.innerHTML = Object.entries(govCount).map(([gov, count]) => `
+            <div class="gov-card">
+                <div class="gov-name">${gov}</div>
+                <div class="gov-count">${count} طلب</div>
+            </div>
+        `).join('');
+
+        // الرسم البياني للمبيعات
         const salesCtx = document.getElementById('salesChart').getContext('2d');
         new Chart(salesCtx, {
             type: 'line',
@@ -597,6 +518,7 @@
                     data: [1243, 3177, 2343, 2343, 3777, 0, 0],
                     borderColor: '#F97316',
                     backgroundColor: 'rgba(249,115,22,0.1)',
+                    borderWidth: 2,
                     tension: 0.4
                 }]
             },
@@ -607,6 +529,7 @@
             }
         });
 
+        // الرسم البياني لطرق الدفع
         const paymentCtx = document.getElementById('paymentChart').getContext('2d');
         new Chart(paymentCtx, {
             type: 'doughnut',
@@ -614,20 +537,16 @@
                 labels: ['عند الاستلام', 'بطاقة'],
                 datasets: [{
                     data: [80, 20],
-                    backgroundColor: ['#F97316', '#0A0F1F']
+                    backgroundColor: ['#F97316', '#0A0F1F'],
+                    borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
             }
         });
-
-        // ===== فتح/إغلاق القائمة الجانبية للجوال =====
-        function toggleMobileMenu() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
-        }
     </script>
 </body>
 </html>

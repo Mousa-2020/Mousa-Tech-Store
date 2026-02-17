@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سلة التسوق - Mousa Tech Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        .cart-page {
+            padding: 20px 0 80px;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .cart-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .clear-cart {
+            background: none;
+            border: 2px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .cart-items {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            background: var(--light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+        }
+        
+        .cart-item-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            background: none;
+            border: 2px solid var(--border);
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--primary);
+        }
+        
+        .quantity {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: #EF4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .cart-summary {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: none;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-cart i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+        
+        .continue-shopping {
+            display: inline-block;
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html">
+                <img src="logo.png" alt="Mousa Tech Store" class="logo">
+            </a>
+            <div class="header-buttons">
+                <button class="icon-btn" onclick="window.location.href='cart.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </button>
+                <button class="icon-btn" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container cart-page">
+        <div class="cart-header">
+            <h1 class="cart-title">🛒 سلة التسوق</h1>
+            <button class="clear-cart" onclick="clearCart()">
+                <i class="fas fa-trash"></i> تفريغ السلة
+            </button>
+        </div>
+
+        <div id="cartItems" class="cart-items">
+            <!-- السلة تظهر هنا -->
+        </div>
+
+        <div class="cart-summary" id="cartSummary">
+            <!-- ملخص السلة يظهر هنا -->
+        </div>
+    </div>
+
+    <a href="https://wa.me/9647717538315" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="products.js"></script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function displayCart() {
+            const cartContainer = document.getElementById('cartItems');
+            const summaryContainer = document.getElementById('cartSummary');
+            
+            if (cart.length === 0) {
+                cartContainer.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>سلة التسوق فارغة</h3>
+                        <p>أضف بعض المنتجات لتتمكن من الشراء</p>
+                        <a href="index.html" class="continue-shopping">
+                            <i class="fas fa-arrow-right"></i> تصفح المنتجات
+                        </a>
+                    </div>
+                `;
+                summaryContainer.innerHTML = '';
+                return;
+            }
+
+            let cartHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                cartHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">$${Math.round(item.price/1500)}</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <button class="remove-item" onclick="removeFromCart(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cartContainer.innerHTML = cartHTML;
+            
+            summaryContainer.innerHTML = `
+                <div class="summary-row">
+                    <span>المجموع</span>
+                    <span>$${Math.round(total/1500)}</span>
+                </div>
+                <div class="summary-row">
+                    <span>التوصيل</span>
+                    <span>سيتحدد لاحقاً</span>
+                </div>
+                <div class="summary-row total">
+                    <span>الإجمالي</span>
+                    <span>$${Math.round(total/1500)}</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">
+                    <i class="fas fa-credit-card"></i> إتمام الطلب
+                </button>
+            `;
+            
+            updateCartCount();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+        }
+
+        function clearCart() {
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('السلة فارغة');
+                return;
+            }
+            window.location.href = 'checkout.html';
+        }
+
+        function updateCartCount() {
+            document.querySelectorAll('.cart-count').forEach(el => {
+                el.textContent = cart.length;
+            });
+        }
+
+        displayCart();
+    </script>
+</body>
+</html>

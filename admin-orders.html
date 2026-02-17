@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الطلبات - لوحة التحكم | Mousa Tech Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,77 +12,25 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', sans-serif;
         }
-
         body {
             background: #f1f5f9;
+            display: flex;
         }
-
-        /* للجوال */
-        .mobile-top-bar {
-            display: none;
-            background: #0A0F1F;
-            color: white;
-            padding: 15px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            justify-content: space-between;
-        }
-
-        .mobile-top-bar h2 {
-            color: #F97316;
-        }
-
-        .mobile-bottom-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #0A0F1F;
-            padding: 8px;
-            z-index: 1000;
-            justify-content: space-around;
-        }
-
-        .mobile-nav-item {
-            color: #94a3b8;
-            text-align: center;
-            font-size: 0.7rem;
-        }
-
-        .mobile-nav-item i {
-            font-size: 1.2rem;
-            display: block;
-        }
-
-        .mobile-nav-item.active {
-            color: #F97316;
-        }
-
-        /* للكمبيوتر */
         .sidebar {
             width: 250px;
             background: #0A0F1F;
             color: white;
             height: 100vh;
             position: fixed;
-            right: 0;
-            top: 0;
             padding: 20px 0;
         }
-
         .logo-area {
             padding: 0 20px 20px;
             border-bottom: 1px solid #334155;
         }
-
         .logo-area h2 {
             color: #F97316;
         }
-
         .menu-item {
             padding: 12px 20px;
             display: flex;
@@ -92,22 +39,18 @@
             color: #cbd5e1;
             cursor: pointer;
         }
-
         .menu-item:hover {
             background: #1e293b;
         }
-
         .menu-item.active {
             background: #F97316;
             color: white;
         }
-
         .main-content {
             margin-right: 250px;
             padding: 20px;
+            width: calc(100% - 250px);
         }
-
-        /* المحتوى */
         .filters-bar {
             background: white;
             border-radius: 12px;
@@ -115,9 +58,7 @@
             margin-bottom: 20px;
             display: flex;
             gap: 15px;
-            flex-wrap: wrap;
         }
-
         .search-box {
             flex: 1;
             display: flex;
@@ -125,9 +66,7 @@
             background: #f1f5f9;
             border-radius: 8px;
             padding: 0 15px;
-            min-width: 200px;
         }
-
         .search-box input {
             border: none;
             background: none;
@@ -135,79 +74,48 @@
             width: 100%;
             outline: none;
         }
-
         .filter-select {
             padding: 12px;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             min-width: 150px;
         }
-
-        .export-btn {
-            background: #F97316;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
         .orders-container {
             background: white;
             border-radius: 12px;
             overflow: hidden;
         }
-
         .order-card {
             padding: 20px;
             border-bottom: 1px solid #e2e8f0;
         }
-
         .order-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
             cursor: pointer;
         }
-
         .order-id {
             font-weight: 700;
             color: #F97316;
         }
-
         .order-body {
             display: none;
             grid-template-columns: 2fr 1fr 1fr;
             gap: 15px;
             margin-top: 15px;
         }
-
         .order-body.show {
             display: grid;
         }
-
         .status-badge {
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 0.85rem;
-            display: inline-block;
         }
-
-        .status-new {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .status-shipped {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-delivered {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
+        .status-new { background: #dbeafe; color: #1e40af; }
+        .status-shipped { background: #fef3c7; color: #92400e; }
+        .status-delivered { background: #d1fae5; color: #065f46; }
         .action-btn {
             background: none;
             border: none;
@@ -215,45 +123,10 @@
             cursor: pointer;
             margin: 0 5px;
         }
-
-        .action-btn:hover {
-            color: #F97316;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .mobile-top-bar {
-                display: flex;
-            }
-
-            .mobile-bottom-nav {
-                display: flex;
-            }
-
-            .main-content {
-                margin-right: 0;
-                padding: 70px 10px 80px 10px;
-            }
-
-            .filters-bar {
-                flex-direction: column;
-            }
-
-            .order-body {
-                grid-template-columns: 1fr;
-            }
-        }
+        .action-btn:hover { color: #F97316; }
     </style>
 </head>
 <body>
-    <div class="mobile-top-bar">
-        <h2>Mousa Tech</h2>
-        <div><i class="fas fa-bell"></i> <i class="fas fa-user"></i></div>
-    </div>
-
     <div class="sidebar">
         <div class="logo-area">
             <h2>Mousa Tech</h2>
@@ -263,15 +136,6 @@
         <div class="menu-item" onclick="window.location.href='admin-products.html'">📦 المنتجات</div>
         <div class="menu-item active">📋 الطلبات</div>
         <div class="menu-item" onclick="window.location.href='admin-customers.html'">👥 العملاء</div>
-        <div class="menu-item" onclick="window.location.href='admin-reports.html'">📈 التقارير</div>
-    </div>
-
-    <div class="mobile-bottom-nav">
-        <div class="mobile-nav-item" onclick="window.location.href='admin-dashboard.html'">📊</div>
-        <div class="mobile-nav-item" onclick="window.location.href='admin-products.html'">📦</div>
-        <div class="mobile-nav-item active">📋</div>
-        <div class="mobile-nav-item" onclick="window.location.href='admin-customers.html'">👥</div>
-        <div class="mobile-nav-item" onclick="window.location.href='admin-reports.html'">📈</div>
     </div>
 
     <div class="main-content">
@@ -286,43 +150,41 @@
                 <option value="قيد التوصيل">قيد التوصيل</option>
                 <option value="تم التوصيل">تم التوصيل</option>
             </select>
-            <button class="export-btn" onclick="exportOrders()">
-                <i class="fas fa-file-excel"></i> تصدير
-            </button>
         </div>
 
         <div class="orders-container" id="ordersContainer"></div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+
     <script>
-        // ===== جلب الطلبات من localStorage =====
-        let orders = JSON.parse(localStorage.getItem('orders')) || [];
-        
-        // إذا مافي طلبات، نضيف طلب تجريبي
-        if (orders.length === 0) {
-            orders.push({
-                id: Date.now(),
-                date: new Date().toLocaleString('ar-IQ'),
-                customer: {
-                    name: 'طلب تجريبي',
-                    phone: '07712345678',
-                    gov: 'بغداد',
-                    address: 'الكرادة'
-                },
-                items: [{ name: 'iPhone 15 Pro', price: 1233 }],
-                total: 1233,
-                payment: 'عند الاستلام',
-                status: 'جديد'
-            });
-            localStorage.setItem('orders', JSON.stringify(orders));
+        let orders = [];
+
+        async function loadOrders() {
+            try {
+                const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
+                orders = [];
+                snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+                
+                if (orders.length === 0) {
+                    orders = JSON.parse(localStorage.getItem('orders')) || [];
+                }
+                
+                displayOrders(orders);
+            } catch (error) {
+                console.error('خطأ:', error);
+                orders = JSON.parse(localStorage.getItem('orders')) || [];
+                displayOrders(orders);
+            }
         }
 
-        // عرض الطلبات
-        function displayOrders(ordersToShow = orders) {
+        function displayOrders(ordersToShow) {
             const container = document.getElementById('ordersContainer');
             
             if (ordersToShow.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px;">لا توجد طلبات</div>';
+                container.innerHTML = '<div style="text-align:center; padding:40px;">لا توجد طلبات</div>';
                 return;
             }
 
@@ -335,28 +197,26 @@
 
                 return `
                     <div class="order-card">
-                        <div class="order-header" onclick="toggleDetails(${order.id})">
+                        <div class="order-header" onclick="toggleDetails('${order.id}')">
                             <div>
                                 <span class="order-id">#${order.id}</span>
-                                <span style="margin-right: 10px;">${order.date}</span>
+                                <span style="margin-right:10px;">${order.date}</span>
                             </div>
                             <span class="status-badge ${statusClass}">${order.status}</span>
                         </div>
                         <div class="order-body" id="details-${order.id}">
                             <div>
-                                <strong>👤 ${order.customer.name}</strong><br>
-                                📞 ${order.customer.phone}<br>
-                                📍 ${order.customer.gov} - ${order.customer.address}
+                                <strong>👤 ${order.customer?.name}</strong><br>
+                                📞 ${order.customer?.phone}<br>
+                                📍 ${order.customer?.gov} - ${order.customer?.address}
                             </div>
                             <div>
                                 <strong>📦 المنتجات:</strong><br>
-                                ${order.items.map(i => `• ${i.name} - $${i.price}`).join('<br>')}
+                                ${order.items?.map(i => `• ${i.name} - $${i.price}`).join('<br>')}
                             </div>
                             <div>
                                 <strong>💰 الإجمالي: $${order.total}</strong><br>
-                                💳 ${order.payment}<br>
-                                <button class="action-btn" onclick="printOrder(${order.id})"><i class="fas fa-print"></i></button>
-                                <button class="action-btn" onclick="changeStatus(${order.id})"><i class="fas fa-edit"></i></button>
+                                💳 ${order.payment}
                             </div>
                         </div>
                     </div>
@@ -364,25 +224,10 @@
             }).join('');
         }
 
-        // إظهار/إخفاء التفاصيل
         function toggleDetails(id) {
             document.getElementById(`details-${id}`).classList.toggle('show');
         }
 
-        // تغيير الحالة
-        function changeStatus(id) {
-            const newStatus = prompt('أدخل الحالة (جديد - قيد التوصيل - تم التوصيل)');
-            if (newStatus && ['جديد', 'قيد التوصيل', 'تم التوصيل'].includes(newStatus)) {
-                const order = orders.find(o => o.id === id);
-                if (order) {
-                    order.status = newStatus;
-                    localStorage.setItem('orders', JSON.stringify(orders));
-                    displayOrders();
-                }
-            }
-        }
-
-        // تصفية الطلبات
         function filterOrders() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const status = document.getElementById('statusFilter').value;
@@ -391,9 +236,8 @@
 
             if (search) {
                 filtered = filtered.filter(o => 
-                    o.customer.name.toLowerCase().includes(search) ||
-                    o.customer.phone.includes(search) ||
-                    o.id.toString().includes(search)
+                    o.customer?.name.toLowerCase().includes(search) ||
+                    o.customer?.phone.includes(search)
                 );
             }
 
@@ -404,59 +248,7 @@
             displayOrders(filtered);
         }
 
-        // طباعة
-        function printOrder(id) {
-            const order = orders.find(o => o.id === id);
-            alert(`طباعة فاتورة #${order.id}`);
-        }
-
-        // تصدير Excel
-        function exportOrders() {
-            let csv = 'رقم الطلب,التاريخ,العميل,الهاتف,المحافظة,المنتجات,المبلغ,طريقة الدفع,الحالة\n';
-            
-            orders.forEach(o => {
-                const products = o.items.map(i => i.name).join(' - ');
-                csv += `"${o.id}","${o.date}","${o.customer.name}","${o.customer.phone}","${o.customer.gov}","${products}",${o.total},"${o.payment}","${o.status}"\n`;
-            });
-
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'الطلبات.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        displayOrders();
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-<script src="firebase-config.js"></script>
-<script>
-    let orders = [];
-
-    // جلب الطلبات من Firebase
-    async function loadOrders() {
-        try {
-            const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
-            orders = [];
-            snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-            
-            if (orders.length === 0) {
-                // إذا مافي طلبات، نجيب من localStorage
-                orders = JSON.parse(localStorage.getItem('orders')) || [];
-            }
-            
-            displayOrders(orders);
-        } catch (error) {
-            console.error('خطأ في Firebase:', error);
-            orders = JSON.parse(localStorage.getItem('orders')) || [];
-            displayOrders(orders);
-        }
-    }
-
-    loadOrders();
-</script>
+        loadOrders();
+    </script>
 </body>
-    
 </html>

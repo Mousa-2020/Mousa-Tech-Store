@@ -12,22 +12,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
             padding: 20px;
         }
         
         .thank-you-card {
             background: white;
             border-radius: 20px;
-            padding: 40px 30px;
+            padding: 40px;
             max-width: 500px;
+            text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
         }
         
         .success-icon {
             width: 80px;
             height: 80px;
-            background: #10B981;
+            background: var(--success);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -37,16 +38,15 @@
             margin: 0 auto 20px;
         }
         
-        .thank-you-title {
-            font-size: 2rem;
+        h1 {
             color: var(--primary);
             margin-bottom: 10px;
         }
         
         .order-number {
             background: var(--light);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
             margin: 20px 0;
             font-size: 1.2rem;
         }
@@ -84,28 +84,32 @@
         
         .action-btn.secondary {
             background: var(--light);
-            color: var(--primary);
+            color: var(--text);
             border: 2px solid var(--border);
         }
         
         .action-btn:hover {
             transform: translateY(-3px);
         }
+        
+        .invoice-note {
+            margin-top: 20px;
+            padding: 15px;
+            background: #dbeafe;
+            border-radius: 8px;
+            color: #1e40af;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <a href="index.html">
-                <img src="logo.png" alt="Mousa Tech Store" class="logo">
-            </a>
+            <a href="index.html"><img src="logo.png" alt="Mousa Tech Store" class="logo"></a>
             <div class="header-buttons">
                 <button class="icon-btn" onclick="window.location.href='cart.html'">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count">0</span>
-                </button>
-                <button class="icon-btn" onclick="window.location.href='profile.html'">
-                    <i class="fas fa-user"></i>
                 </button>
             </div>
         </div>
@@ -117,13 +121,14 @@
                 <i class="fas fa-check"></i>
             </div>
             
-            <h1 class="thank-you-title">تم استلام طلبك!</h1>
+            <h1>تم استلام طلبك!</h1>
             
             <div class="order-number">
                 رقم الطلب: <span id="orderId">#12345</span>
             </div>
             
             <p class="info-text">
+                تم إرسال الفاتورة إلى بريدك الإلكتروني<br>
                 سنقوم بالتواصل معك قريباً لتأكيد الطلب<br>
                 والتوصيل خلال 24 ساعة داخل بغداد<br>
                 للمحافظات الأخرى 2-3 أيام عمل
@@ -133,26 +138,24 @@
                 <a href="index.html" class="action-btn primary">
                     <i class="fas fa-home"></i> العودة للرئيسية
                 </a>
-                <a href="https://wa.me/9647717538315" class="action-btn secondary">
-                    <i class="fab fa-whatsapp"></i> واتساب
+                <a href="#" class="action-btn secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> طباعة الفاتورة
                 </a>
+            </div>
+            
+            <div class="invoice-note">
+                <i class="fas fa-file-pdf"></i>
+                تم تحميل الفاتورة بصيغة PDF تلقائياً
             </div>
         </div>
     </div>
 
     <script>
-        // عرض رقم الطلب من الرابط
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
         if (orderId) {
             document.getElementById('orderId').textContent = '#' + orderId;
         }
-
-        // تحديث عداد السلة
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        document.querySelectorAll('.cart-count').forEach(el => {
-            el.textContent = cart.length;
-        });
     </script>
 </body>
 </html>
